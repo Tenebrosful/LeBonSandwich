@@ -10,6 +10,9 @@ const port = process.env.EXPRESS_PORT || 3000;
 import logger from "./middleware/logger";
 app.use(logger);
 
+import commandes from "./routes/commandes";
+app.use("/api/commandes", commandes);
+
 /**
  * Handle Errors
  */
