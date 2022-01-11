@@ -6,10 +6,7 @@ import * as express from "express";
 const app = express();
 const port = 5000;
 
-let commandes = {
-    "type": "collection",
-    "count": 3,
-    "commandes": [
+let commandes = [
         {
         "id": "AuTR4-65ZTY",
         "mail_client": "jan.neymar@yaboo.fr",
@@ -27,15 +24,29 @@ let commandes = {
         "mail_client": "claude.francois@grorange.fr",
         "date_commande": "2022-01-07 17:36:45",
         "montant": 14.95
-        },
+        }
     ]
-}
+
 
 app.use(express.json()); // for parsing application/json
 app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
-app.get("/commande", (req, res) => {
-    res.send(commandes);
+app.get("/commandes", (req, res) => {
+    res.json({type: "collection",
+                count: commandes.length,
+                commandes:commandes});
+})
+
+app.get("/commandes/:id", (req, res) => {
+        let commande = commandes.find(element => element.id === req.params.id);
+        if(commande){
+            res.json({ 
+                        type:"source", 
+                        commande:commande
+                    });
+        }else{
+            res.status(404).send("L'identifiant ne correspond à aucune commande.");
+        }
 })
 
 app.use(((req, res) => {
