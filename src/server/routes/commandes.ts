@@ -36,7 +36,18 @@ commandes.get("/", (req, res) => {
     });
 });
 
-    res.status(200).json(resData);
+commandes.get("/:id", (req, res) => {
+    const commande = persistDataCommandes.find(v => v.id === req.params.id);
+
+    if (!commande) res.status(404).json({
+        code: 404,
+        message: `La commande ${req.params.id} n'existe pas`
+    });
+
+    res.status(200).json({
+        commande: commande,
+        type: "resource"
+    });
 });
 
 export default commandes;
