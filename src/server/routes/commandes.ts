@@ -25,11 +25,16 @@ const persistDataCommandes = [
 ];
 
 commandes.get("/", (req, res) => {
-    const resData = {
-        commandes: persistDataCommandes,
-        count: persistDataCommandes.length,
+    const returnData = persistDataCommandes.map(v => {
+        return { date_commande: v.date_commande, id: v.id, mail_client: v.mail_client, montant: v.montant };
+    });
+    
+    res.status(200).json({
+        commandes: returnData,
+        count: returnData.length,
         type: "collection"
-    };
+    });
+});
 
     res.status(200).json(resData);
 });
