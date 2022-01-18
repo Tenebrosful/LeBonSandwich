@@ -28,7 +28,7 @@ commandes.get("/", (req, res) => {
     const returnData = persistDataCommandes.map(v => {
         return { date_commande: v.date_commande, id: v.id, mail_client: v.mail_client, montant: v.montant };
     });
-    
+
     res.status(200).json({
         commandes: returnData,
         count: returnData.length,
@@ -39,10 +39,13 @@ commandes.get("/", (req, res) => {
 commandes.get("/:id", (req, res) => {
     const commande = persistDataCommandes.find(v => v.id === req.params.id);
 
-    if (!commande) res.status(404).json({
-        code: 404,
-        message: `La commande ${req.params.id} n'existe pas`
-    });
+    if (!commande) {
+        res.status(404).json({
+            code: 404,
+            message: `La commande ${req.params.id} n'existe pas`
+        });
+        return;
+    }
 
     res.status(200).json({
         commande: commande,
