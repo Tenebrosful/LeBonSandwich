@@ -1,0 +1,21 @@
+version: "3"
+services:
+  LeBonSandwich_api:
+    container_name: LeBonSandwich_api
+    image: node:17-alpine
+    env_file:
+      - ./config/bdd.env
+      - ./config/server.env
+    working_dir: /usr/src/app
+    volumes:
+      - .:/usr/src/app
+      - ./node_modules:/usr/src/app/node_modules
+    ports:
+      - 3333:3000
+    command: npm run start-docker
+    networks:
+      - LeBonSandwich
+
+networks:
+  LeBonSandwich:
+    driver: bridge
