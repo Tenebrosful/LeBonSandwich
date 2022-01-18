@@ -2,7 +2,7 @@ import * as express from "express";
 import * as dotenv from "dotenv";
 
 dotenv.config({ path: "config/server.env" });
-//dotenv.config({ path: "config/bdd.env" });
+// dotenv.config({ path: "config/bdd.env" });
 
 const app = express();
 const port = process.env.EXPRESS_PORT || 3000;
