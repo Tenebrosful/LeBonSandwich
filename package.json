@@ -3,6 +3,7 @@
   "types": "build/index.d.js",
   "scripts": {
     "start": "./scripts/start-server.bash",
+    "start-docker": "sh ./scripts/start-server.bash",
     "dev": "npx ts-node src/server/server.ts",
     "watch": "nodemon src/server/server.ts",
     "build": "tsc",

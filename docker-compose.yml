@@ -1,0 +1,48 @@
+version: "3"
+services:
+  LeBonSandwich_api:
+    container_name: LeBonSandwich_api
+    image: node:17-alpine
+    depends_on:
+      - LeBonSandwich_bd
+    links:
+      - LeBonSandwich_bd
+    env_file:
+      - ./config/bdd.env
+      - ./config/server.env
+    working_dir: /usr/src/app
+    volumes:
+      - .:/usr/src/app
+      - ./node_modules:/usr/src/app/node_modules
+    ports:
+      - ${EXPOSED_EXPRESS_PORT}:${EXPRESS_PORT}
+    command: npm run start-docker
+    networks:
+      - LeBonSandwich
+
+  LeBonSandwich_adminer:
+    container_name: LeBonSandwich_adminer
+    image: adminer:4
+    depends_on:
+      - LeBonSandwich_bd
+    ports:
+      - ${EXPOSED_ADMINER_PORT}:8080
+    networks:
+      - LeBonSandwich
+  
+  LeBonSandwich_bd:
+    container_name: LeBonSandwich_db
+    image: mariadb:10.7
+    env_file:
+      - ./config/bdd.env
+    volumes:
+      - ./db:/var/lib/mysql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/1.sql
+      - ./database/data.sql:/docker-entrypoint-initdb.d/2.sql
+    networks:
+      - LeBonSandwich
+
+
+networks:
+  LeBonSandwich:
+    driver: bridge
