@@ -11,5 +11,6 @@ BDD_URL=
 ```env
 NODE_ENV=
 EXPRESS_PORT=
-DOCKER_EXPOSED_EXPRESS_PORT=
 ```
+
+> Faire correspondre EXPRESS_PORT avec le port du docker-compose si docker est utilisé

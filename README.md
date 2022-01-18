@@ -7,7 +7,13 @@ Réalisé par [Hugo Bernard](https://github.com/Tenebrosful) et [Geoffrey Porayk
 
 ### Variables d'environnement
 
-[Voir les fichiers .env à créer](./config/README.md)
+- Configuration des ports Docker dans un `.env` en racine du projet
+```env
+EXPOSED_EXPRESS_PORT=
+EXPRESS_PORT=
+```
+
+- [Voir les fichiers .env à créer](./config/README.md)
 
 ### Instalation des packages
 

@@ -11,7 +11,7 @@ services:
       - .:/usr/src/app
       - ./node_modules:/usr/src/app/node_modules
     ports:
-      - ${DOCKER_EXPOSED_EXPRESS_PORT}:${EXPRESS_PORT}
+      - ${EXPOSED_EXPRESS_PORT}:${EXPRESS_PORT}
     command: npm run start-docker
     networks:
       - LeBonSandwich
