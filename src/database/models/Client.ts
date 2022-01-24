@@ -1,14 +1,12 @@
-import { Column, Model, Table } from "sequelize-typescript";
-import { DataTypes } from "sequelize/dist";
+import { Column, DataType, Model, Table } from "sequelize-typescript";
 
 @Table
-class Client extends Model {
-  @Column({type: DataTypes.STRING(128)})
+export class Client extends Model {
+  @Column({type: DataType.STRING(128)})
   nom_client: string;
-  @Column({type: DataTypes.STRING(256)})
+  @Column({type: DataType.STRING(256)})
   mail_client: string;
-  
-  
+  @Column({type: DataType.STRING(256)})
   passwd: string;
   
   
