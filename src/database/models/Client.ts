@@ -1,29 +1,32 @@
-import { Column, CreatedAt, DataType, IsEmail, Model, NotNull, PrimaryKey, Table, UpdatedAt } from "sequelize-typescript";
+import { AllowNull, AutoIncrement, Column, CreatedAt, DataType, Default, IsEmail, Model, NotNull, PrimaryKey, Table, UpdatedAt } from "sequelize-typescript";
 
 @Table
 export class Client extends Model {
   @PrimaryKey
-  @Column({ autoIncrement: true, type: DataType.INTEGER })
+  @AutoIncrement
+  @Column(DataType.INTEGER)
   id: number;
 
-  @NotNull
-  @Column({ type: DataType.STRING(128) })
+  @CreatedAt
+  @Default(null)
+  created_at: Date;
+
+  @UpdatedAt
+  @Default(null)
+  updated_at: Date;
+
+  @Column(DataType.STRING(128))
   nom_client: string;
 
-  @NotNull
   @IsEmail
-  @Column({ type: DataType.STRING(256) })
+  @Column(DataType.STRING(256))
   mail_client: string;
 
   @Column({ type: DataType.STRING(256) })
   passwd: string;
 
-  @Column({ type: DataType.DECIMAL(8, 2) })
+  @Default(null)
+  @Column(DataType.DECIMAL(8, 2))
   cumul_achats: number;
 
-  @CreatedAt
-  created_at: Date;
-
-  @UpdatedAt
-  updated_at: Date;
 }
