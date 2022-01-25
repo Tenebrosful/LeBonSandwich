@@ -3,7 +3,6 @@ import * as dotenv from "dotenv";
 import { initBDD } from "../database/database";
 
 dotenv.config({ path: "config/server.env" });
-// dotenv.config({ path: "config/bdd.env" });
 
 const app = express();
 const port = process.env.EXPRESS_PORT || 3000;
@@ -14,7 +13,7 @@ import logger from "./middleware/logger";
 app.use(logger);
 
 import commandes from "./routes/commandes";
-app.use("/api/commandes", commandes);
+app.use("/api/commande", commandes);
 
 import clients from "./routes/clients";
 app.use("/api/client", clients);

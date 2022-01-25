@@ -11,5 +11,9 @@ clients.get("/", async (req, res, next) => {
         next(error);
       }
     });
+  
+clients.use("/", (req, res) => {
+  res.status(405);
+})
 
 export default clients;
