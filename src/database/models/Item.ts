@@ -1,7 +1,7 @@
 import { AutoIncrement, BelongsTo, Column, CreatedAt, DataType, Default, ForeignKey, IsDate, IsEmail, Model, NotNull, PrimaryKey, Table, UpdatedAt } from "sequelize-typescript";
 import { Commande } from "./Commande";
 
-@Table
+@Table({tableName: "item"})
 export class Item extends Model {
   @PrimaryKey
   @AutoIncrement

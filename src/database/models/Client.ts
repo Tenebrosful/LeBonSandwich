@@ -1,6 +1,6 @@
 import { AutoIncrement, Column, CreatedAt, DataType, Default, IsEmail, Model, NotNull, PrimaryKey, Table, UpdatedAt } from "sequelize-typescript";
 
-@Table
+@Table({tableName: "client"})
 export class Client extends Model {
   @PrimaryKey
   @AutoIncrement
