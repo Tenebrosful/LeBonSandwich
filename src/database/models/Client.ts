@@ -1,4 +1,4 @@
-import { AllowNull, AutoIncrement, Column, CreatedAt, DataType, Default, IsEmail, Model, NotNull, PrimaryKey, Table, UpdatedAt } from "sequelize-typescript";
+import { AutoIncrement, Column, CreatedAt, DataType, Default, IsEmail, Model, NotNull, PrimaryKey, Table, UpdatedAt } from "sequelize-typescript";
 
 @Table
 export class Client extends Model {
@@ -7,12 +7,14 @@ export class Client extends Model {
   @Column(DataType.INTEGER)
   id: number;
 
-  @CreatedAt
   @Default(null)
+  @CreatedAt
+  @Column
   created_at: Date;
 
-  @UpdatedAt
   @Default(null)
+  @UpdatedAt
+  @Column
   updated_at: Date;
 
   @Column(DataType.STRING(128))
