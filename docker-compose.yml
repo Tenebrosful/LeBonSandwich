@@ -2,7 +2,7 @@ version: "3"
 services:
   LeBonSandwich_api:
     container_name: LeBonSandwich_api
-    image: node:17-alpine
+    image: node:17
     depends_on:
       - LeBonSandwich_bd
     links:
@@ -16,7 +16,7 @@ services:
       - ./node_modules:/usr/src/app/node_modules
     ports:
       - ${EXPOSED_EXPRESS_PORT}:${EXPRESS_PORT}
-    command: npm run start-docker
+    command: npm run start
     networks:
       - LeBonSandwich
 
