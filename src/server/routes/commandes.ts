@@ -1,15 +1,17 @@
 import * as express from "express";
-import { getBDD } from "../../database/database";
 import { Commande } from "../../database/models/Commande";
+import error405 from "../errors/error405";
 const commandes = express.Router();
 
 commandes.get("/", async (req, res, next) => {
-    try {
-        const allCommande = await Commande.findAll();
-        res.status(200).json(allCommande);
-      } catch (error) {
-        next(error);
-      }
-    });
+  try {
+    const allCommande = await Commande.findAll();
+    res.status(200).json(allCommande);
+  } catch (error) {
+    next(error);
+  }
+});
+
+commandes.use("/", error405);
 
 export default commandes;

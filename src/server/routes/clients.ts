@@ -1,6 +1,6 @@
 import * as express from "express";
-import { getBDD } from "../../database/database";
 import { Client } from "../../database/models/Client";
+import error405 from "../errors/error405";
 const clients = express.Router();
 
 clients.get("/", async (req, res, next) => {
@@ -12,8 +12,6 @@ clients.get("/", async (req, res, next) => {
       }
     });
   
-clients.use("/", (req, res) => {
-  res.status(405);
-})
+clients.use("/", error405);
 
 export default clients;
