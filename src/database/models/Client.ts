@@ -1,4 +1,4 @@
-import { AutoIncrement, Column, CreatedAt, DataType, Default, IsEmail, Model, NotNull, PrimaryKey, Table, UpdatedAt } from "sequelize-typescript";
+import { AutoIncrement, Column, CreatedAt, DataType, Default, IsEmail, Model, PrimaryKey, Table, UpdatedAt } from "sequelize-typescript";
 
 @Table({tableName: "client"})
 export class Client extends Model {
