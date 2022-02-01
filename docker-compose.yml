@@ -4,9 +4,9 @@ services:
     container_name: LeBonSandwich_api
     image: node:17
     depends_on:
-      - LeBonSandwich_bd
+      - LeBonSandwich_db
     links:
-      - LeBonSandwich_bd
+      - LeBonSandwich_db
     env_file:
       - ./config/bdd.env
       - ./config/server.env
@@ -24,13 +24,13 @@ services:
     container_name: LeBonSandwich_adminer
     image: adminer:4
     depends_on:
-      - LeBonSandwich_bd
+      - LeBonSandwich_db
     ports:
       - ${EXPOSED_ADMINER_PORT}:8080
     networks:
       - LeBonSandwich
   
-  LeBonSandwich_bd:
+  LeBonSandwich_db:
     container_name: LeBonSandwich_db
     image: mariadb:10.7
     env_file:
