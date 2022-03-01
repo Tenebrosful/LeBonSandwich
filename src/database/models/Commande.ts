@@ -4,7 +4,6 @@ import { Client } from "./Client";
 @Table({tableName: "commande"})
 export class Commande extends Model {
   @PrimaryKey
-  @Default(DataType.UUIDV4)
   @Column(DataType.UUID)
   id: string;
 
