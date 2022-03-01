@@ -6,8 +6,23 @@ const commandes = express.Router();
 
 commandes.get("/", async (req, res, next) => {
   try {
-    const allCommande = await Commande.findAll();
-    res.status(200).json(allCommande);
+    const allCommande = await Commande.findAll(
+      { attributes: ["id", "mail", "montant", "created_at"] });
+
+    const resData = {
+      commandes: allCommande.map(commande => {
+        return {
+          date_commande: commande.created_at,
+          id: commande.id,
+          mail_client: commande.mail,
+          montant: commande.montant,
+        };
+      }),
+      count: allCommande.length,
+      type: "collection",
+    };
+
+    res.status(200).json(resData);
   } catch (error) {
     next(error);
   }
