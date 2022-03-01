@@ -65,7 +65,7 @@ export class Commande extends Model {
   @Column(DataType.INTEGER)
   status: number;
 
-  @HasMany(() => Item)
+  @HasMany(() => Item, "command_id")
   items: Item[];
 
 }

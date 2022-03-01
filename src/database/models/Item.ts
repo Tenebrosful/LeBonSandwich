@@ -28,7 +28,7 @@ export class Item extends Model {
   @Column(DataType.STRING(128))
   command_id: string;
 
-  @BelongsTo(() => Commande)
+  @BelongsTo(() => Commande, "command_id")
   commande: Commande;
 
 }
