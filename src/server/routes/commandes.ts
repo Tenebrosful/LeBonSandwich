@@ -15,7 +15,7 @@ commandes.get("/", async (req, res, next) => {
           date_commande: commande.created_at,
           id: commande.id,
           mail_client: commande.mail,
-          montant: commande.montant,
+          montant: commande.montant
         };
       }),
       count: allCommande.length,
@@ -30,8 +30,33 @@ commandes.get("/", async (req, res, next) => {
 
 commandes.get("/:id", async (req, res, next) => {
   try {
-    const commande = await Commande.findOne({ where: { id: req.params.id } });
-    res.status(200).json(commande);
+    const commande = await Commande.findOne(
+      {
+        attributes: ["id", "mail", "nom", "created_at", "livraison", "montant"],
+        where: { id: req.params.id }
+      });
+
+    if (!commande) {
+      res.status(404).json({
+        code: 404,
+        message: `No commande found with id ${req.params.id}`
+      });
+      return;
+    }
+
+    const resData = {
+      commandes: {
+        date_commande: commande.created_at,
+        date_livraison: commande.livraison,
+        id: commande.id,
+        mail_client: commande.mail,
+        montant: commande.montant,
+        nom_client: commande.nom
+      },
+      type: "resource"
+    };
+
+    res.status(200).json(resData);
   } catch (error) {
     next(error);
   }
