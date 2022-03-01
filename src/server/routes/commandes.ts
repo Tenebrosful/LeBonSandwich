@@ -1,6 +1,7 @@
 import * as express from "express";
 import { Commande } from "../../database/models/Commande";
 import error405 from "../errors/error405";
+import { error422DatabaseUpsert } from "../errors/error422";
 const commandes = express.Router();
 
 commandes.get("/", async (req, res, next) => {
@@ -8,6 +9,36 @@ commandes.get("/", async (req, res, next) => {
     const allCommande = await Commande.findAll();
     res.status(200).json(allCommande);
   } catch (error) {
+    next(error);
+  }
+});
+
+commandes.get("/:id", async (req, res, next) => {
+  try {
+    const commande = await Commande.findOne({where: {id: req.params.id}});
+    res.status(200).json(commande);
+  } catch (error) {
+    next(error);
+  }
+});
+
+commandes.put("/:id", async (req, res, next) => {
+  const commandFields = {
+    livraison: req.body.livraison,
+    mail: req.body.mail,
+    nom: req.body.nom
+  };
+
+  try {
+    const newOrUpdatedCommande = await Commande.upsert({ id: req.params.id, ...commandFields });
+    console.log(newOrUpdatedCommande);
+    
+    if (newOrUpdatedCommande[1])
+      res.status(201).json(newOrUpdatedCommande[0].toJSON());
+    else
+      res.status(204).send();
+  } catch (error) {
+    error422DatabaseUpsert(error, req, res);
     next(error);
   }
 });

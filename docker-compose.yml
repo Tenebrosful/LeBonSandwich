@@ -16,7 +16,7 @@ services:
       - ./node_modules:/usr/src/app/node_modules
     ports:
       - ${EXPOSED_EXPRESS_PORT}:${EXPRESS_PORT}
-    command: npm run start
+    command: npm run watch
     networks:
       - LeBonSandwich
 
@@ -32,7 +32,7 @@ services:
   
   LeBonSandwich_db:
     container_name: LeBonSandwich_db
-    image: mariadb:10.7
+    image: mariadb:latest
     env_file:
       - ./config/bdd.env
     volumes:
