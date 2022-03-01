@@ -15,7 +15,7 @@ commandes.get("/", async (req, res, next) => {
 
 commandes.get("/:id", async (req, res, next) => {
   try {
-    const commande = await Commande.findAll({where: {id: req.params.id}});
+    const commande = await Commande.findOne({where: {id: req.params.id}});
     res.status(200).json(commande);
   } catch (error) {
     next(error);
