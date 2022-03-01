@@ -73,8 +73,21 @@ commandes.put("/:id", async (req, res, next) => {
     const newOrUpdatedCommande = await Commande.upsert({ id: req.params.id, ...commandFields });
     console.log(newOrUpdatedCommande);
 
-    if (newOrUpdatedCommande[1])
-      res.status(201).json(newOrUpdatedCommande[0].toJSON());
+    if (newOrUpdatedCommande[1]) {
+      const resData = {
+        commandes: {
+          date_commande: newOrUpdatedCommande[0].created_at,
+          date_livraison: newOrUpdatedCommande[0].livraison,
+          id: newOrUpdatedCommande[0].id,
+          mail_client: newOrUpdatedCommande[0].mail,
+          montant: newOrUpdatedCommande[0].montant,
+          nom_client: newOrUpdatedCommande[0].nom
+        },
+        type: "resource"
+      };
+
+      res.status(201).json(resData);
+    }
     else
       res.status(204).send();
   } catch (error) {
