@@ -45,7 +45,7 @@ export class Commande extends Model {
   @Column(DataType.INTEGER)
   client_id: number;
 
-  @BelongsTo(() => Client)
+  @BelongsTo(() => Client, "client_id")
   client: Client;
 
   @Default(null)

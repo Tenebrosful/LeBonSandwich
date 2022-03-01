@@ -1,4 +1,5 @@
-import { AutoIncrement, Column, CreatedAt, DataType, Default, IsEmail, Model, PrimaryKey, Table, UpdatedAt } from "sequelize-typescript";
+import { AutoIncrement, Column, CreatedAt, DataType, Default, HasMany, IsEmail, Model, PrimaryKey, Table, UpdatedAt } from "sequelize-typescript";
+import { Commande } from "./Commande";
 
 @Table({tableName: "client"})
 export class Client extends Model {
@@ -30,5 +31,8 @@ export class Client extends Model {
   @Default(null)
   @Column(DataType.DECIMAL(8, 2))
   cumul_achats: number;
+
+  @HasMany(() => Commande, "client_id")
+  commandes: Commande[];
 
 }
