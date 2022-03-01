@@ -1,9 +1,11 @@
-import { BelongsTo, Column, CreatedAt, DataType, Default, ForeignKey, IsDate, IsEmail, Model, PrimaryKey, Table, UpdatedAt } from "sequelize-typescript";
+import { BelongsTo, Column, CreatedAt, DataType, Default, ForeignKey, HasMany, IsDate, IsEmail, Model, PrimaryKey, Table, UpdatedAt } from "sequelize-typescript";
 import { Client } from "./Client";
+import { Item } from "./Item";
 
 @Table({tableName: "commande"})
 export class Commande extends Model {
   @PrimaryKey
+  @Default(DataType.UUIDV4)
   @Column(DataType.UUID)
   id: string;
 
@@ -44,7 +46,7 @@ export class Commande extends Model {
   @Column(DataType.INTEGER)
   client_id: number;
 
-  @BelongsTo(() => Client)
+  @BelongsTo(() => Client, "client_id")
   client: Client;
 
   @Default(null)
@@ -63,5 +65,8 @@ export class Commande extends Model {
   @Default(1)
   @Column(DataType.INTEGER)
   status: number;
+
+  @HasMany(() => Item, "command_id")
+  items: Item[];
 
 }
