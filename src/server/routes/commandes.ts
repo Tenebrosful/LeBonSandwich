@@ -1,7 +1,7 @@
 import * as express from "express";
-import { DatabaseError } from "sequelize";
 import { Commande } from "../../database/models/Commande";
 import error405 from "../errors/error405";
+import { error422DatabaseUpsert } from "../errors/error422";
 const commandes = express.Router();
 
 commandes.get("/", async (req, res, next) => {
@@ -38,16 +38,7 @@ commandes.put("/:id", async (req, res, next) => {
     else
       res.status(204).send();
   } catch (error) {
-    // @ts-ignore
-    if (error instanceof DatabaseError && error.original.code === "ER_NO_DEFAULT_FOR_FIELD") {
-      res.status(422).json({
-        code: 422,
-        // @ts-ignore
-        message: `Command with id ${req.params.id} doesn't exist and required fields are missing in the request body${process.env.NODE_ENV === "dev" ? " [[[[ " + error.original.text + " ]]]]" : ""}`
-      });
-      return;
-    }
-
+    error422DatabaseUpsert(error, req, res);
     next(error);
   }
 });
