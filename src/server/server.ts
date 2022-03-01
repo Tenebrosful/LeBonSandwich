@@ -3,6 +3,7 @@ import * as dotenv from "dotenv";
 import { initBDD } from "../database/database";
 
 import logger from "./middleware/logger";
+import * as bodyParser from "body-parser";
 
 import commandes from "./routes/commandes";
 import clients from "./routes/clients";
@@ -18,6 +19,9 @@ const port = process.env.EXPRESS_PORT || 3000;
 initBDD();
 
 app.use(logger);
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 app.use("/api/commande", commandes);
 
