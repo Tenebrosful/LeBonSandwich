@@ -18,6 +18,9 @@ app.use("/api/commande", commandes);
 import clients from "./routes/clients";
 app.use("/api/client", clients);
 
+import items from "./routes/items";
+app.use("/api/items", items);
+
 /**
  * Handle Errors
  */
