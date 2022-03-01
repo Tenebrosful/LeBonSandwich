@@ -18,7 +18,7 @@ commandes.get("/", async (req, res, next) => {
           montant: commande.montant
         };
       }),
-      count: allCommande.length,
+      count: (await Commande.count()),
       type: "collection",
     };
 
