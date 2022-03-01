@@ -28,7 +28,7 @@ const instance = new Sequelize({
 
   try {
     await instance.authenticate();
-    console.log('Connection has been established successfully.');
+    console.log("Connection has been established successfully.");
     BDDInstance = instance;
     return instance;
   }
