@@ -1,5 +1,4 @@
 import * as dotenv from "dotenv";
-import { Dialect } from "sequelize";
 import { Sequelize } from "sequelize-typescript";
 import { Client } from "./models/Client";
 import { Commande } from "./models/Commande";
