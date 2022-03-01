@@ -4,7 +4,7 @@ import { DatabaseError } from "sequelize";
 /**
  * Error 422 "Unprocessable Entity"
  */
-export function error422DatabaseUpsert(error: unknown, req: Request, res: Response) {
+export function error422DatabaseUpsert(error: any, req: Request, res: Response) {
   if (!(error instanceof DatabaseError)) return;
 
   res.status(422).json({
