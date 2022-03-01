@@ -33,7 +33,8 @@ CREATE TABLE `commande` (
   `ref_paiement` varchar(128) DEFAULT NULL,
   `date_paiement` datetime DEFAULT NULL,
   `mode_paiement` int(11) DEFAULT NULL,
-  `status` int(11) NOT NULL DEFAULT 1
+  `status` int(11) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
