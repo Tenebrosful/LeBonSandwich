@@ -15,7 +15,7 @@ commandes.get("/", async (req, res, next) => {
 
 commandes.get("/:id", async (req, res, next) => {
   try {
-    const commande = await Commande.findOne({where: {id: req.params.id}});
+    const commande = await Commande.findOne({ where: { id: req.params.id } });
     res.status(200).json(commande);
   } catch (error) {
     next(error);
@@ -32,7 +32,7 @@ commandes.put("/:id", async (req, res, next) => {
   try {
     const newOrUpdatedCommande = await Commande.upsert({ id: req.params.id, ...commandFields });
     console.log(newOrUpdatedCommande);
-    
+
     if (newOrUpdatedCommande[1])
       res.status(201).json(newOrUpdatedCommande[0].toJSON());
     else
