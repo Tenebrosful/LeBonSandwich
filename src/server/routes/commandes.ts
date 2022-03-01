@@ -59,16 +59,20 @@ commandes.get("/:id", async (req, res, next) => {
       },
       type: "resource",
     };
+    
+    if(req.query.embed){
+      const embeds = (req.query.embed as string).split(",");
 
-    // @ts-ignore
-    if (req.query.embed) resData.commandes.items = (await commande.$get("items")).map(item => {
-      return {
-        id: item.id,
-        libelle: item.libelle,
-        quantite: item.quantite,
-        tarif: item.tarif
-      };
-    });
+      // @ts-ignore
+      if (embeds.includes("items")) resData.commandes.items = (await commande.$get("items")).map(item => {
+        return {
+          id: item.id,
+          libelle: item.libelle,
+          quantite: item.quantite,
+          tarif: item.tarif
+        };
+      });
+    }
 
     res.status(200).json(resData);
   } catch (error) {
