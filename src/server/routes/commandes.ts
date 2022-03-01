@@ -47,6 +47,7 @@ commandes.get("/:id", async (req, res, next) => {
     }
 
     const resData = {
+      type: "resource",
       commandes: {
         date_commande: commande.created_at,
         date_livraison: commande.livraison,
@@ -55,7 +56,10 @@ commandes.get("/:id", async (req, res, next) => {
         montant: commande.montant,
         nom_client: commande.nom
       },
-      type: "resource"
+      links:{
+        items: { href: "/commande/"+commande.id+"/items/"},
+        self: { href: "/commande/"+commande.id}
+      }
     };
 
     res.status(200).json(resData);
@@ -68,9 +72,11 @@ commandes.get("/:id/items", async (req, res, next) => {
   try {
     const commande = await Commande.findOne(
       {
-        attributes: ["id", "items"],
-        where: { command_id: req.params.id }
+        where: { id: req.params.id }
       });
+
+      console.log(commande);
+      
 
     if (!commande) {
       res.status(404).json({
@@ -80,10 +86,10 @@ commandes.get("/:id/items", async (req, res, next) => {
       return;
     }
 
-    console.log(commande.items, commande.get("items"));
+    const items = await commande.$get("items");
 
     const resData = {
-      commandes: commande.get("items").map(item => {
+      commandes: items.map(item => {
         return {
           id: item.id,
           libelle: item.libelle,
@@ -91,7 +97,7 @@ commandes.get("/:id/items", async (req, res, next) => {
           tarif: item.tarif
         };
       }),
-      count: commande.items.length,
+      count: items.length,
       type: "collection",
     };
 
