@@ -1,9 +1,7 @@
 import * as express from "express";
 import { Commande } from "../../database/models/Commande";
-import { Item } from "../../database/models/Item";
 import error405 from "../errors/error405";
 import { error422DatabaseUpsert } from "../errors/error422";
-import items from "./items";
 const commandes = express.Router();
 
 commandes.get("/", async (req, res, next) => {
@@ -47,7 +45,6 @@ commandes.get("/:id", async (req, res, next) => {
     }
 
     const resData = {
-      type: "resource",
       commandes: {
         date_commande: commande.created_at,
         date_livraison: commande.livraison,
@@ -59,8 +56,19 @@ commandes.get("/:id", async (req, res, next) => {
       links:{
         items: { href: "/commande/"+commande.id+"/items/"},
         self: { href: "/commande/"+commande.id}
-      }
+      },
+      type: "resource",
     };
+
+    // @ts-ignore
+    if (req.query.embed) resData.commandes.items = (await commande.$get("items")).map(item => {
+      return {
+        id: item.id,
+        libelle: item.libelle,
+        quantite: item.quantite,
+        tarif: item.tarif
+      };
+    });
 
     res.status(200).json(resData);
   } catch (error) {
