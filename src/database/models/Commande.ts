@@ -5,6 +5,7 @@ import { Item } from "./Item";
 @Table({tableName: "commande"})
 export class Commande extends Model {
   @PrimaryKey
+  @Default(DataType.UUIDV4)
   @Column(DataType.UUID)
   id: string;
 

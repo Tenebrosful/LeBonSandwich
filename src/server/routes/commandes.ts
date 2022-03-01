@@ -153,6 +153,36 @@ commandes.put("/:id", async (req, res, next) => {
   }
 });
 
+commandes.post("/", async (req, res, next) => {
+  const commandFields = {
+    livraison: req.body.livraison,
+    mail: req.body.mail,
+    nom: req.body.nom
+  };
+
+  try{
+    const commande = await Commande.create({ ...commandFields });
+    if (commande) {
+      const resData = {
+        commandes: {
+          date_commande: commande.created_at,
+          date_livraison: commande.livraison,
+          id: commande.id,
+          mail_client: commande.mail,
+          montant: commande.montant,
+          nom_client: commande.nom
+        },
+        type: "resource"
+      };
+
+      res.status(201).json(resData);
+    }
+  }catch(error){
+    next(error);
+  }
+
+});
+
 commandes.use("/", error405);
 
 export default commandes;
