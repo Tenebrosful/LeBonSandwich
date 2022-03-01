@@ -1,10 +1,11 @@
-import { AutoIncrement, BelongsTo, Column, CreatedAt, DataType, Default, ForeignKey, IsDate, IsEmail, Model, NotNull, PrimaryKey, Table, UpdatedAt } from "sequelize-typescript";
+import { BelongsTo, Column, CreatedAt, DataType, Default, ForeignKey, IsDate, IsEmail, Model, PrimaryKey, Table, UpdatedAt } from "sequelize-typescript";
 import { Client } from "./Client";
 
 @Table({tableName: "commande"})
 export class Commande extends Model {
   @PrimaryKey
-  @Column(DataType.STRING(128))
+  @Default(DataType.UUIDV4)
+  @Column(DataType.UUID)
   id: string;
 
   @CreatedAt
