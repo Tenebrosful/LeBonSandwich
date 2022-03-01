@@ -53,7 +53,64 @@ commandes.get("/:id", async (req, res, next) => {
         montant: commande.montant,
         nom_client: commande.nom
       },
-      type: "resource"
+      links:{
+        items: { href: "/commande/"+commande.id+"/items/"},
+        self: { href: "/commande/"+commande.id}
+      },
+      type: "resource",
+    };
+    
+    if(req.query.embed){
+      const embeds = (req.query.embed as string).split(",");
+
+      // @ts-ignore
+      if (embeds.includes("items")) resData.commandes.items = (await commande.$get("items")).map(item => {
+        return {
+          id: item.id,
+          libelle: item.libelle,
+          quantite: item.quantite,
+          tarif: item.tarif
+        };
+      });
+    }
+
+    res.status(200).json(resData);
+  } catch (error) {
+    next(error);
+  }
+});
+
+commandes.get("/:id/items", async (req, res, next) => {
+  try {
+    const commande = await Commande.findOne(
+      {
+        where: { id: req.params.id }
+      });
+
+      console.log(commande);
+      
+
+    if (!commande) {
+      res.status(404).json({
+        code: 404,
+        message: `No commande found with id ${req.params.id}`
+      });
+      return;
+    }
+
+    const items = await commande.$get("items");
+
+    const resData = {
+      commandes: items.map(item => {
+        return {
+          id: item.id,
+          libelle: item.libelle,
+          quantite: item.quantite,
+          tarif: item.tarif
+        };
+      }),
+      count: items.length,
+      type: "collection",
     };
 
     res.status(200).json(resData);
@@ -94,6 +151,36 @@ commandes.put("/:id", async (req, res, next) => {
     error422DatabaseUpsert(error, req, res);
     next(error);
   }
+});
+
+commandes.post("/", async (req, res, next) => {
+  const commandFields = {
+    livraison: req.body.livraison,
+    mail: req.body.mail,
+    nom: req.body.nom
+  };
+
+  try{
+    const commande = await Commande.create({ ...commandFields });
+    if (commande) {
+      const resData = {
+        commandes: {
+          date_commande: commande.created_at,
+          date_livraison: commande.livraison,
+          id: commande.id,
+          mail_client: commande.mail,
+          montant: commande.montant,
+          nom_client: commande.nom
+        },
+        type: "resource"
+      };
+
+      res.status(201).json(resData);
+    }
+  }catch(error){
+    next(error);
+  }
+
 });
 
 commandes.use("/", error405);

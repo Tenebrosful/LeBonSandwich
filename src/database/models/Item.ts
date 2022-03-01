@@ -1,7 +1,7 @@
 import { AutoIncrement, BelongsTo, Column, DataType, Default, ForeignKey, Model, PrimaryKey, Table } from "sequelize-typescript";
 import { Commande } from "./Commande";
 
-@Table({tableName: "item"})
+@Table({tableName: "item", timestamps: false})
 export class Item extends Model {
   @PrimaryKey
   @AutoIncrement
@@ -28,7 +28,7 @@ export class Item extends Model {
   @Column(DataType.STRING(128))
   command_id: string;
 
-  @BelongsTo(() => Commande)
+  @BelongsTo(() => Commande, "command_id")
   commande: Commande;
 
 }

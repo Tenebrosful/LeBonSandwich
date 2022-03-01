@@ -3,6 +3,7 @@ import { Sequelize } from "sequelize-typescript";
 import { Dialect } from "sequelize";
 import { Client } from "./models/Client";
 import { Commande } from "./models/Commande";
+import { Item } from "./models/Item";
 
 /**
  * Setup
@@ -19,7 +20,7 @@ const instance = new Sequelize({
   database: process.env.MYSQL_DATABASE,
   dialect: process.env.BDD_DRIVER as Dialect,
   host: process.env.MYSQL_HOST,
-  models: [Client, Commande],
+  models: [Client, Commande, Item],
   password: process.env.MYSQL_PASSWORD,
   port: 3306,
   username: process.env.MYSQL_USER,
