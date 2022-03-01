@@ -80,8 +80,10 @@ commandes.get("/:id/items", async (req, res, next) => {
       return;
     }
 
+    console.log(commande.items, commande.get("items"));
+
     const resData = {
-      commandes: commande.items.map(item => {
+      commandes: commande.get("items").map(item => {
         return {
           id: item.id,
           libelle: item.libelle,
