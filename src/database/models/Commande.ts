@@ -27,7 +27,7 @@ export class Commande extends Model {
   @Column(DataType.STRING(256))
   mail: string;
 
-  @Default(null)
+  @Default(0)
   @Column(DataType.DECIMAL(8, 2))
   montant: number;
 
