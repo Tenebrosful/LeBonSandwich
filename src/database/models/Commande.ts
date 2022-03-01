@@ -1,5 +1,6 @@
-import { BelongsTo, Column, CreatedAt, DataType, Default, ForeignKey, IsDate, IsEmail, Model, PrimaryKey, Table, UpdatedAt } from "sequelize-typescript";
+import { BelongsTo, Column, CreatedAt, DataType, Default, ForeignKey, HasMany, IsDate, IsEmail, Model, PrimaryKey, Table, UpdatedAt } from "sequelize-typescript";
 import { Client } from "./Client";
+import { Item } from "./Item";
 
 @Table({tableName: "commande"})
 export class Commande extends Model {
@@ -63,5 +64,8 @@ export class Commande extends Model {
   @Default(1)
   @Column(DataType.INTEGER)
   status: number;
+
+  @HasMany(() => Item)
+  items: Item[];
 
 }

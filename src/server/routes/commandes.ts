@@ -3,6 +3,7 @@ import { Commande } from "../../database/models/Commande";
 import { Item } from "../../database/models/Item";
 import error405 from "../errors/error405";
 import { error422DatabaseUpsert } from "../errors/error422";
+import items from "./items";
 const commandes = express.Router();
 
 commandes.get("/", async (req, res, next) => {
@@ -65,13 +66,13 @@ commandes.get("/:id", async (req, res, next) => {
 
 commandes.get("/:id/items", async (req, res, next) => {
   try {
-    const {count, rows: items}= await Item.findAndCountAll(
+    const commande = await Commande.findOne(
       {
-        attributes: ["id", "libelle", "tarif", "quantite"],
+        attributes: ["id", "items"],
         where: { command_id: req.params.id }
       });
 
-    if (!items) {
+    if (!commande) {
       res.status(404).json({
         code: 404,
         message: `No commande found with id ${req.params.id}`
@@ -80,7 +81,7 @@ commandes.get("/:id/items", async (req, res, next) => {
     }
 
     const resData = {
-      commandes: items.map(item => {
+      commandes: commande.items.map(item => {
         return {
           id: item.id,
           libelle: item.libelle,
@@ -88,7 +89,7 @@ commandes.get("/:id/items", async (req, res, next) => {
           tarif: item.tarif
         };
       }),
-      count,
+      count: commande.items.length,
       type: "collection",
     };
 
