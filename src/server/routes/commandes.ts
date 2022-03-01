@@ -3,8 +3,6 @@ import { Commande } from "../../database/models/Commande";
 import error405 from "../errors/error405";
 const commandes = express.Router();
 
-commandes.use(restify.CORS());
-
 commandes.get("/", async (req, res, next) => {
   try {
     const allCommande = await Commande.findAll();
