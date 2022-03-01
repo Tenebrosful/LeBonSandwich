@@ -6,7 +6,7 @@ const commandes = express.Router();
 
 commandes.get("/", async (req, res, next) => {
   try {
-    const allCommande = await Commande.findAll(
+    const {count, rows: allCommande} = await Commande.findAndCountAll(
       { attributes: ["id", "mail", "montant", "created_at"] });
 
     const resData = {
@@ -18,7 +18,7 @@ commandes.get("/", async (req, res, next) => {
           montant: commande.montant
         };
       }),
-      count: (await Commande.count()),
+      count,
       type: "collection",
     };
 
