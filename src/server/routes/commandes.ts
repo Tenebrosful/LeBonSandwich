@@ -1,6 +1,6 @@
 import * as express from "express";
 import { Commande } from "../../database/models/Commande";
-import error403 from "../errors/error403";
+import { Item } from "../../database/models/Item";
 import error405 from "../errors/error405";
 import { error422DatabaseUpsert } from "../errors/error422";
 import handleToken from "../middleware/handleToken";
@@ -155,7 +155,7 @@ commandes.post("/", async (req, res, next) => {
   const commandFields = {
     livraison: req.body.livraison,
     mail: req.body.mail,
-    nom: req.body.nom
+    nom: req.body.nom,
   };
 
   try {
@@ -164,19 +164,34 @@ commandes.post("/", async (req, res, next) => {
       { token: commande.id },
       'RANDOM_TOKEN_SECRET');
     commande.token = token;
-    await commande.update({ token: token })
     if (commande) {
+
+      let montant = 0;
+
+      if (req.body.items) {
+        let items = req.body.items
+        for (let i = 0; i < items.length; i++) {
+          items[i].command_id = commande.id;
+          await Item.create(items[i]);
+          console.log(items[i]);
+          
+          montant += items[i].tarif * items[i].quantite;
+        }
+      }
+      console.log(montant + " update");
+
+      await commande.update({ token: token, montant: montant })
+
       const resData = {
         commandes: {
-          date_commande: commande.created_at,
+          nom_client: commande.nom,
+          mail_client: commande.mail,
           date_livraison: commande.livraison,
           id: commande.id,
-          mail_client: commande.mail,
-          montant: commande.montant,
-          nom_client: commande.nom
+          token: token,
+          montant: montant
         },
         type: "resource",
-        token: token
       };
 
       res.status(201).json(resData);
