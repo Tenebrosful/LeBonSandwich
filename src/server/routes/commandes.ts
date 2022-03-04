@@ -8,6 +8,7 @@ import * as jwt from 'jsonwebtoken';
 import { ResponseAllCommandes, ResponseCollection, ResponseCommande, ResponseCommandeLinks, ResponseItem, ResponseType } from "../types/ResponseTypes";
 import { isSet } from "util/types";
 import CommandeSchema from "../../database/validateSchema/CommandeSchema";
+import handleDataValidation from "../middleware/handleDataValidation";
 const commandes = express.Router();
 
 commandes.get("/", async (req, res, next) => {
@@ -144,12 +145,7 @@ commandes.put("/:id", handleToken, async (req, res, next) => {
     nom: req.body.nom
   };
 
-  const { error: validationError } = CommandeSchema.validate(commandFields);
-
-  if (validationError) {
-    res.status(422).json({ code: 422, message: validationError.details.map(details => details.message).join(", ").replaceAll('\"', "'") });
-    return;
-  }
+  if(handleDataValidation(CommandeSchema, commandFields, req, res, true)) return;
 
   try {
     await commande.update(commandFields);
@@ -168,12 +164,7 @@ commandes.post("/", async (req, res, next) => {
     nom: req.body.nom,
   };
 
-  const { error } = CommandeSchema.validate(commandFields, { presence: "required" });
-
-  if (error) {
-    res.status(422).json({ code: 422, message: error.details.map(details => details.message).join(", ").replaceAll('\"', "'") });
-    return;
-  }
+  if(handleDataValidation(CommandeSchema, commandFields, req, res, true)) return;
 
   try {
     const commande = await Commande.create({ ...commandFields });
@@ -242,12 +233,7 @@ commandes.patch("/:id", handleToken, async (req, res, next) => {
     nom: req.body.nom
   };
 
-  const { error: validationError } = CommandeSchema.validate(commandFields);
-
-  if (validationError) {
-    res.status(422).json({ code: 422, message: validationError.details.map(details => details.message).join(", ").replaceAll('\"', "'") });
-    return;
-  }
+  if(handleDataValidation(CommandeSchema, commandFields, req, res)) return;
 
   try {
     commande.update({ ...commandFields });
