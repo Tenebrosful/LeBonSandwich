@@ -144,6 +144,13 @@ commandes.put("/:id", handleToken, async (req, res, next) => {
     nom: req.body.nom
   };
 
+  const { error } = CommandeSchema.validate(commandFields);
+
+  if (error) {
+    res.status(422).json({ code: 422, message: error.details.map(details => details.message).join(", ").replaceAll('\"', "'") });
+    return;
+  }
+
   try {
     await commande.update(commandFields);
     res.status(204).send();
@@ -234,6 +241,13 @@ commandes.patch("/:id", handleToken, async (req, res, next) => {
     mail: req.body.mail,
     nom: req.body.nom
   };
+
+  const { error } = CommandeSchema.validate(commandFields);
+
+  if (error) {
+    res.status(422).json({ code: 422, message: error.details.map(details => details.message).join(", ").replaceAll('\"', "'") });
+    return;
+  }
 
   try {
     commande.update({ ...commandFields });
