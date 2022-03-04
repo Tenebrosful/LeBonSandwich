@@ -125,15 +125,15 @@ commandes.put("/:id", handleToken, async (req, res, next) => {
     {
       where: { id: req.params.id }
     });
-
-  if (!commande) {
-    res.status(404).json({
+    
+    if (!commande) {
+      res.status(404).json({
       code: 404,
       message: `No commande found with id ${req.params.id}`
     });
     return;
   }
-
+  
   if (commande.token !== res.locals.token) error403(req, res);
   
   const commandFields = {
