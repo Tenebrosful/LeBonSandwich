@@ -53,7 +53,6 @@ commandes.get("/:id", async (req, res, next) => {
         date_commande: commande.created_at,
         date_livraison: commande.livraison,
         id: commande.id,
-        items: [],
         mail_client: commande.mail,
         montant: commande.montant,
         nom_client: commande.nom,

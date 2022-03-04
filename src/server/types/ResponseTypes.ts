@@ -22,7 +22,7 @@ export type ResponseCommande = {
   mail_client: string,
   montant: number,
   nom_client: string,
-  items: ResponseItem[]
+  items?: ResponseItem[]
 };
 
 export type ResponseCommandeLinks = {
