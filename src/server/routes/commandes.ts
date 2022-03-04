@@ -2,6 +2,7 @@ import * as express from "express";
 import { Commande } from "../../database/models/Commande";
 import error405 from "../errors/error405";
 import { error422DatabaseUpsert } from "../errors/error422";
+import { ResponseCommande, ResponseCommandeLinks, ResponseItem, ResponseType } from "../types/ResponseTypes";
 const commandes = express.Router();
 
 commandes.get("/", async (req, res, next) => {
@@ -44,8 +45,8 @@ commandes.get("/:id", async (req, res, next) => {
       return;
     }
 
-    const resData = {
-      commandes: {
+    const resData: ResponseCommande & ResponseType & ResponseCommandeLinks & { items?: ResponseItem[]} = {
+      commande:  {
         date_commande: commande.created_at,
         date_livraison: commande.livraison,
         id: commande.id,
@@ -63,8 +64,7 @@ commandes.get("/:id", async (req, res, next) => {
     if(req.query.embed){
       const embeds = (req.query.embed as string).split(",");
 
-      // @ts-ignore
-      if (embeds.includes("items")) resData.commandes.items = (await commande.$get("items")).map(item => {
+      if (embeds.includes("items")) resData.commande.items = (await commande.$get("items")).map(item => {
         return {
           id: item.id,
           libelle: item.libelle,
