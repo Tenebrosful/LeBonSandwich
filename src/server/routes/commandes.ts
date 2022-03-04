@@ -3,7 +3,8 @@ import { Commande } from "../../database/models/Commande";
 import error403 from "../errors/error403";
 import error405 from "../errors/error405";
 import { error422DatabaseUpsert } from "../errors/error422";
-import handleTokenMiddleware from "../middleware/handleToken";
+import handleToken from "../middleware/handleToken";
+import * as jwt from 'jsonwebtoken';
 import { ResponseAllCommandes, ResponseCollection, ResponseCommande, ResponseCommandeLinks, ResponseItem, ResponseType } from "../types/ResponseTypes";
 const commandes = express.Router();
 
@@ -159,6 +160,11 @@ commandes.post("/", async (req, res, next) => {
 
   try {
     const commande = await Commande.create({ ...commandFields });
+    const token = jwt.sign(
+      { token: commande.id },
+      'RANDOM_TOKEN_SECRET');
+    commande.token = token;
+    await commande.update({ token: token })
     if (commande) {
       const resData = {
         commandes: {
@@ -169,7 +175,8 @@ commandes.post("/", async (req, res, next) => {
           montant: commande.montant,
           nom_client: commande.nom
         },
-        type: "resource"
+        type: "resource",
+        token: token
       };
 
       res.status(201).json(resData);
