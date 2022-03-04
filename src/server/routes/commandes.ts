@@ -3,11 +3,12 @@ import { Commande } from "../../database/models/Commande";
 import error405 from "../errors/error405";
 import { error422DatabaseUpsert } from "../errors/error422";
 import { ResponseCommande, ResponseCommandeLinks, ResponseItem, ResponseType } from "../types/ResponseTypes";
+import * as jwt from "jsonwebtoken";
 const commandes = express.Router();
 
 commandes.get("/", async (req, res, next) => {
   try {
-    const {count, rows: allCommande} = await Commande.findAndCountAll(
+    const { count, rows: allCommande } = await Commande.findAndCountAll(
       { attributes: ["id", "mail", "montant", "created_at"] });
 
     const resData = {
@@ -45,8 +46,8 @@ commandes.get("/:id", async (req, res, next) => {
       return;
     }
 
-    const resData: ResponseCommande & ResponseType & ResponseCommandeLinks & { items?: ResponseItem[]} = {
-      commande:  {
+    const resData: ResponseCommande & ResponseType & ResponseCommandeLinks & { items?: ResponseItem[] } = {
+      commande: {
         date_commande: commande.created_at,
         date_livraison: commande.livraison,
         id: commande.id,
@@ -54,14 +55,14 @@ commandes.get("/:id", async (req, res, next) => {
         montant: commande.montant,
         nom_client: commande.nom
       },
-      links:{
-        items: { href: "/commande/"+commande.id+"/items/"},
-        self: { href: "/commande/"+commande.id}
+      links: {
+        items: { href: "/commande/" + commande.id + "/items/" },
+        self: { href: "/commande/" + commande.id }
       },
       type: "resource",
     };
-    
-    if(req.query.embed){
+
+    if (req.query.embed) {
       const embeds = (req.query.embed as string).split(",");
 
       if (embeds.includes("items")) resData.commande.items = (await commande.$get("items")).map(item => {
@@ -87,8 +88,8 @@ commandes.get("/:id/items", async (req, res, next) => {
         where: { id: req.params.id }
       });
 
-      console.log(commande);
-      
+    console.log(commande);
+
 
     if (!commande) {
       res.status(404).json({
@@ -160,8 +161,13 @@ commandes.post("/", async (req, res, next) => {
     nom: req.body.nom
   };
 
-  try{
+  try {
     const commande = await Commande.create({ ...commandFields });
+    const token = jwt.sign(
+      { token: commande.id },
+      'RANDOM_TOKEN_SECRET');
+    commande.token = token;
+    await commande.update({ token: token })
     if (commande) {
       const resData = {
         commandes: {
@@ -172,12 +178,13 @@ commandes.post("/", async (req, res, next) => {
           montant: commande.montant,
           nom_client: commande.nom
         },
-        type: "resource"
+        type: "resource",
+        token: token
       };
 
       res.status(201).json(resData);
     }
-  }catch(error){
+  } catch (error) {
     next(error);
   }
 
