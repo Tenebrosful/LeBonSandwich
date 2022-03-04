@@ -227,6 +227,9 @@ commandes.patch("/:id", handleToken, async (req, res, next) => {
   try {
     commande.update({ ...commandFields});
     res.status(204).send();
+  } catch (error) {
+    error422DatabaseUpsert(error, req, res);
+    next(error);
   }
   
 });
