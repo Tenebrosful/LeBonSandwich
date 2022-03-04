@@ -6,6 +6,7 @@ import { error422DatabaseUpsert } from "../errors/error422";
 import handleToken from "../middleware/handleToken";
 import * as jwt from 'jsonwebtoken';
 import { ResponseAllCommandes, ResponseCollection, ResponseCommande, ResponseCommandeLinks, ResponseItem, ResponseType } from "../types/ResponseTypes";
+import { isSet } from "util/types";
 const commandes = express.Router();
 
 commandes.get("/", async (req, res, next) => {
@@ -124,17 +125,17 @@ commandes.put("/:id", handleToken, async (req, res, next) => {
     {
       where: { id: req.params.id }
     });
-    
-    if (!commande) {
-      res.status(404).json({
+
+  if (!commande) {
+    res.status(404).json({
       code: 404,
       message: `No commande found with id ${req.params.id}`
     });
     return;
   }
-  
+
   if (commande.token !== res.locals.token) { error405(req, res); return; }
-  
+
   const commandFields = {
     livraison: req.body.livraison,
     mail: req.body.mail,
@@ -151,6 +152,7 @@ commandes.put("/:id", handleToken, async (req, res, next) => {
 });
 
 commandes.post("/", async (req, res, next) => {
+
   const commandFields = {
     livraison: req.body.livraison,
     mail: req.body.mail,
@@ -173,7 +175,7 @@ commandes.post("/", async (req, res, next) => {
           items[i].command_id = commande.id;
           await Item.create(items[i]);
           console.log(items[i]);
-          
+
           montant += items[i].tarif * items[i].quantite;
         }
       }
@@ -225,13 +227,13 @@ commandes.patch("/:id", handleToken, async (req, res, next) => {
   };
 
   try {
-    commande.update({ ...commandFields});
+    commande.update({ ...commandFields });
     res.status(204).send();
   } catch (error) {
     error422DatabaseUpsert(error, req, res);
     next(error);
   }
-  
+
 });
 
 commandes.use("/", error405);
