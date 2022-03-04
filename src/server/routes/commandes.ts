@@ -144,10 +144,10 @@ commandes.put("/:id", handleToken, async (req, res, next) => {
     nom: req.body.nom
   };
 
-  const { error } = CommandeSchema.validate(commandFields);
+  const { error: validationError } = CommandeSchema.validate(commandFields);
 
-  if (error) {
-    res.status(422).json({ code: 422, message: error.details.map(details => details.message).join(", ").replaceAll('\"', "'") });
+  if (validationError) {
+    res.status(422).json({ code: 422, message: validationError.details.map(details => details.message).join(", ").replaceAll('\"', "'") });
     return;
   }
 
@@ -242,10 +242,10 @@ commandes.patch("/:id", handleToken, async (req, res, next) => {
     nom: req.body.nom
   };
 
-  const { error } = CommandeSchema.validate(commandFields);
+  const { error: validationError } = CommandeSchema.validate(commandFields);
 
-  if (error) {
-    res.status(422).json({ code: 422, message: error.details.map(details => details.message).join(", ").replaceAll('\"', "'") });
+  if (validationError) {
+    res.status(422).json({ code: 422, message: validationError.details.map(details => details.message).join(", ").replaceAll('\"', "'") });
     return;
   }
 
