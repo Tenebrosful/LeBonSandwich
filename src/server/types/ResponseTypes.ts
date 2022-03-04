@@ -2,22 +2,33 @@ export type ResponseType = {
   type: "collection" | "resource"
 };
 
-export type ResponseCommande = {
-  commande: {
+export type ResponseCollection = {
+  count: number
+} & ResponseType;
+
+export type ResponseAllCommandes = {
+  commandes: {
     date_commande: Date,
-    date_livraison: Date,
     id: string,
     mail_client: string,
-    montant: number,
-    nom_client: string,
-    items?: ResponseItem[]
-  }
+    montant: number
+  }[]
+} & ResponseCollection;
+
+export type ResponseCommande = {
+  date_commande: Date,
+  date_livraison: Date,
+  id: string,
+  mail_client: string,
+  montant: number,
+  nom_client: string,
+  items: ResponseItem[]
 };
 
 export type ResponseCommandeLinks = {
   links: {
-    items?: { href: string },
-    self?: { href: string }
+    items: { href: string },
+    self: { href: string }
   }
 };
 
