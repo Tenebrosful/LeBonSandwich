@@ -121,12 +121,6 @@ commandes.get("/:id/items", async (req, res, next) => {
 });
 
 commandes.put("/:id", handleToken, async (req, res, next) => {
-  const commandFields = {
-    livraison: req.body.livraison,
-    mail: req.body.mail,
-    nom: req.body.nom
-  };
-
   const commande = await Commande.findOne(
     {
       where: { id: req.params.id }
@@ -141,6 +135,12 @@ commandes.put("/:id", handleToken, async (req, res, next) => {
   }
 
   if (commande.token !== res.locals.token) error403(req, res);
+  
+  const commandFields = {
+    livraison: req.body.livraison,
+    mail: req.body.mail,
+    nom: req.body.nom
+  };
 
   try {
     await commande.update(commandFields);
