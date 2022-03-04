@@ -1,7 +1,9 @@
 import * as express from "express";
 import { Commande } from "../../database/models/Commande";
+import error403 from "../errors/error403";
 import error405 from "../errors/error405";
 import { error422DatabaseUpsert } from "../errors/error422";
+import handleTokenMiddleware from "../middleware/handleToken";
 import { ResponseAllCommandes, ResponseCollection, ResponseCommande, ResponseCommandeLinks, ResponseItem, ResponseType } from "../types/ResponseTypes";
 const commandes = express.Router();
 
@@ -120,34 +122,31 @@ commandes.get("/:id/items", async (req, res, next) => {
   }
 });
 
-commandes.put("/:id", async (req, res, next) => {
+commandes.put("/:id", handleToken, async (req, res, next) => {
   const commandFields = {
     livraison: req.body.livraison,
     mail: req.body.mail,
     nom: req.body.nom
   };
 
+  const commande = await Commande.findOne(
+    {
+      where: { id: req.params.id }
+    });
+
+  if (!commande) {
+    res.status(404).json({
+      code: 404,
+      message: `No commande found with id ${req.params.id}`
+    });
+    return;
+  }
+
+  if (commande.token !== res.locals.token) error403(req, res);
+
   try {
-    const newOrUpdatedCommande = await Commande.upsert({ id: req.params.id, ...commandFields });
-    console.log(newOrUpdatedCommande);
-
-    if (newOrUpdatedCommande[1]) {
-      const resData = {
-        commandes: {
-          date_commande: newOrUpdatedCommande[0].created_at,
-          date_livraison: newOrUpdatedCommande[0].livraison,
-          id: newOrUpdatedCommande[0].id,
-          mail_client: newOrUpdatedCommande[0].mail,
-          montant: newOrUpdatedCommande[0].montant,
-          nom_client: newOrUpdatedCommande[0].nom
-        },
-        type: "resource"
-      };
-
-      res.status(201).json(resData);
-    }
-    else
-      res.status(204).send();
+    await commande.update(commandFields);
+    res.status(204).send();
   } catch (error) {
     error422DatabaseUpsert(error, req, res);
     next(error);
