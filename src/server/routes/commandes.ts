@@ -2,8 +2,8 @@ import * as express from "express";
 import { Commande } from "../../database/models/Commande";
 import error405 from "../errors/error405";
 import { error422DatabaseUpsert } from "../errors/error422";
-import { ResponseCommande, ResponseCommandeLinks, ResponseItem, ResponseType } from "../types/ResponseTypes";
-import * as jwt from "jsonwebtoken";
+import * as jwt from 'jsonwebtoken';
+import { ResponseAllCommandes, ResponseCollection, ResponseCommande, ResponseCommandeLinks, ResponseItem, ResponseType } from "../types/ResponseTypes";
 const commandes = express.Router();
 
 commandes.get("/", async (req, res, next) => {
@@ -11,7 +11,7 @@ commandes.get("/", async (req, res, next) => {
     const { count, rows: allCommande } = await Commande.findAndCountAll(
       { attributes: ["id", "mail", "montant", "created_at"] });
 
-    const resData = {
+    const resData: ResponseAllCommandes = {
       commandes: allCommande.map(commande => {
         return {
           date_commande: commande.created_at,
@@ -46,14 +46,15 @@ commandes.get("/:id", async (req, res, next) => {
       return;
     }
 
-    const resData: ResponseCommande & ResponseType & ResponseCommandeLinks & { items?: ResponseItem[] } = {
+    const resData: { commande: ResponseCommande } & ResponseType & ResponseCommandeLinks = {
       commande: {
         date_commande: commande.created_at,
         date_livraison: commande.livraison,
         id: commande.id,
+        items: [],
         mail_client: commande.mail,
         montant: commande.montant,
-        nom_client: commande.nom
+        nom_client: commande.nom,
       },
       links: {
         items: { href: "/commande/" + commande.id + "/items/" },
@@ -101,8 +102,9 @@ commandes.get("/:id/items", async (req, res, next) => {
 
     const items = await commande.$get("items");
 
-    const resData = {
-      commandes: items.map(item => {
+    const resData: { items: ResponseItem[] } & ResponseCollection = {
+      count: items.length,
+      items: items.map(item => {
         return {
           id: item.id,
           libelle: item.libelle,
@@ -110,7 +112,6 @@ commandes.get("/:id/items", async (req, res, next) => {
           tarif: item.tarif
         };
       }),
-      count: items.length,
       type: "collection",
     };
 
