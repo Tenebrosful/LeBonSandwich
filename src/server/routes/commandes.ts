@@ -2,7 +2,7 @@ import * as express from "express";
 import { Commande } from "../../database/models/Commande";
 import { Item } from "../../database/models/Item";
 import error405 from "../errors/error405";
-import { error422DatabaseUpsert } from "../errors/error422";
+import { error422DatabaseUpdate } from "../errors/error422";
 import handleToken from "../middleware/handleToken";
 import * as jwt from 'jsonwebtoken';
 import { ResponseAllCommandes, ResponseCollection, ResponseCommande, ResponseCommandeLinks, ResponseItem, ResponseType } from "../types/ResponseTypes";
@@ -155,7 +155,7 @@ commandes.put("/:id", handleToken, async (req, res, next) => {
     await commande.update(commandFields);
     res.status(204).send();
   } catch (error) {
-    error422DatabaseUpsert(error, req, res);
+    error422DatabaseUpdate(error, req, res);
     next(error);
   }
 });
@@ -253,7 +253,7 @@ commandes.patch("/:id", handleToken, async (req, res, next) => {
     commande.update({ ...commandFields });
     res.status(204).send();
   } catch (error) {
-    error422DatabaseUpsert(error, req, res);
+    error422DatabaseUpdate(error, req, res);
     next(error);
   }
 
