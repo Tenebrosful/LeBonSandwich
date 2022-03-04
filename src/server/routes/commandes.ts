@@ -90,9 +90,6 @@ commandes.get("/:id/items", async (req, res, next) => {
         where: { id: req.params.id }
       });
 
-    console.log(commande);
-
-
     if (!commande) {
       res.status(404).json({
         code: 404,
