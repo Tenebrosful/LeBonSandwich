@@ -187,6 +187,36 @@ commandes.post("/", async (req, res, next) => {
 
 });
 
+
+commandes.patch("/:id", handleToken, async (req, res, next) => {
+  const commande = await Commande.findOne(
+    {
+      where: { id: req.params.id }
+    });
+
+  if (!commande) {
+    res.status(404).json({
+      code: 404,
+      message: `No commande found with id ${req.params.id}`
+    });
+    return;
+  }
+
+  if (commande.token !== res.locals.token) error403(req, res);
+
+  const commandFields = {
+    livraison: req.body.livraison,
+    mail: req.body.mail,
+    nom: req.body.nom
+  };
+
+  try {
+    commande.update({ ...commandFields});
+    res.status(204).send();
+  }
+  
+});
+
 commandes.use("/", error405);
 
 export default commandes;
