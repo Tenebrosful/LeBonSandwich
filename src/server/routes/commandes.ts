@@ -50,7 +50,7 @@ commandes.get("/:id", async (req, res, next) => {
       return;
     }
 
-    const resData: { commande: ResponseCommande } & ResponseType & ResponseCommandeLinks = {
+    const resData: { commande: ResponseCommande } & ResponseType = {
       commande: {
         date_commande: commande.created_at,
         date_livraison: commande.livraison,
@@ -58,11 +58,12 @@ commandes.get("/:id", async (req, res, next) => {
         mail_client: commande.mail,
         montant: commande.montant,
         nom_client: commande.nom,
+        links: {
+          items: { href: "/commande/" + commande.id + "/items/" },
+          self: { href: "/commande/" + commande.id }
+        },
       },
-      links: {
-        items: { href: "/commande/" + commande.id + "/items/" },
-        self: { href: "/commande/" + commande.id }
-      },
+
       type: "resource",
     };
 
@@ -160,10 +161,10 @@ commandes.post("/", async (req, res, next) => {
     nom: req.body.nom,
   };
 
-  const { error } = CommandeSchema.validate(commandFields, {presence: "required"});
+  const { error } = CommandeSchema.validate(commandFields, { presence: "required" });
 
-  if(error){
-    res.status(422).json({code:422, message: error.details.map(details => details.message).join(", ").replaceAll('\"', "'")});
+  if (error) {
+    res.status(422).json({ code: 422, message: error.details.map(details => details.message).join(", ").replaceAll('\"', "'") });
     return;
   }
 

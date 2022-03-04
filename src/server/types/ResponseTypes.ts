@@ -23,7 +23,7 @@ export type ResponseCommande = {
   montant: number,
   nom_client: string,
   items?: ResponseItem[]
-};
+} & ResponseCommandeLinks;
 
 export type ResponseCommandeLinks = {
   links: {
