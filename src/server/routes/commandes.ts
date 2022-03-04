@@ -133,7 +133,7 @@ commandes.put("/:id", handleToken, async (req, res, next) => {
     return;
   }
   
-  if (commande.token !== res.locals.token) error405(req, res);
+  if (commande.token !== res.locals.token) { error405(req, res); return; }
   
   const commandFields = {
     livraison: req.body.livraison,
