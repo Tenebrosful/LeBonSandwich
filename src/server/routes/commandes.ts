@@ -176,16 +176,17 @@ commandes.post("/", async (req, res, next) => {
       let montant = 0;
 
       if (req.body.items) {
-        let items = req.body.items
-        for (let i = 0; i < items.length; i++) {
-          items[i].command_id = commande.id;
-          await Item.create(items[i]);
-          console.log(items[i]);
+        const items = req.body.items;
 
-          montant += items[i].tarif * items[i].quantite;
-        }
+        const promises = items.map( (x, i) => {
+          items[i].command_id = commande.id;
+          return Item.create(items[i]);
+        });
+
+        await Promise.all(promises);
+
+        montant = items.reduce((acc, current) => acc + current);
       }
-      console.log(montant + " update");
 
       await commande.update({ montant: montant, token: token })
 
