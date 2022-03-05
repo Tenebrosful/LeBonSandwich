@@ -8,6 +8,7 @@ import * as jwt from 'jsonwebtoken';
 import { ResponseAllCommandes, ResponseCollection, ResponseCommande, ResponseItem, ResponseType } from "../types/ResponseTypes";
 import CommandeSchema from "../../database/validateSchema/CommandeSchema";
 import handleDataValidation from "../middleware/handleDataValidation";
+import { RequestItem } from "../types/RequestTypes";
 const commandes = express.Router();
 
 commandes.get("/", async (req, res, next) => {
@@ -144,7 +145,7 @@ commandes.put("/:id", handleToken, async (req, res, next) => {
     nom: req.body.nom
   };
 
-  if(handleDataValidation(CommandeSchema, commandFields, req, res, true)) return;
+  if (handleDataValidation(CommandeSchema, commandFields, req, res, true)) return;
 
   try {
     await commande.update(commandFields);
@@ -163,7 +164,7 @@ commandes.post("/", async (req, res, next) => {
     nom: req.body.nom,
   };
 
-  if(handleDataValidation(CommandeSchema, commandFields, req, res, true)) return;
+  if (handleDataValidation(CommandeSchema, commandFields, req, res, true)) return;
 
   try {
     const commande = await Commande.create({ ...commandFields });
@@ -176,17 +177,34 @@ commandes.post("/", async (req, res, next) => {
       let montant = 0;
 
       if (req.body.items) {
-        const items = req.body.items;
+        let items: RequestItem[] = [];
 
-        const promises = items.map( (x, i) => {
+        if (Array.isArray(req.body.items))
+          items = req.body.items.map((item: RequestItem) => {
+            return {
+              libelle: item.libelle,
+              quantite: item.quantite,
+              tarif: item.tarif,
+              uri: item.uri
+            };
+          });
+        else
+          items[0] = {
+            libelle: req.body.items.libelle,
+            quantite: req.body.items.quantite,
+            tarif: req.body.items.tarif,
+            uri: req.body.items.uri
+          };
+
+        const promises = items.map((x, i) => {
+          // @ts-ignore
           items[i].command_id = commande.id;
           return Item.create(items[i]);
         });
 
         await Promise.all(promises);
 
-        montant = items.reduce((acc, current) => acc + current);
-      }
+        montant = items.map(item => item.quantite * item.tarif).reduce((acc, current) => acc + current);
 
       await commande.update({ montant: montant, token: token })
 
@@ -233,7 +251,7 @@ commandes.patch("/:id", handleToken, async (req, res, next) => {
     nom: req.body.nom
   };
 
-  if(handleDataValidation(CommandeSchema, commandFields, req, res)) return;
+  if (handleDataValidation(CommandeSchema, commandFields, req, res)) return;
 
   try {
     commande.update({ ...commandFields });
