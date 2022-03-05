@@ -5,8 +5,7 @@ import error405 from "../errors/error405";
 import { error422DatabaseUpdate } from "../errors/error422";
 import handleToken from "../middleware/handleToken";
 import * as jwt from 'jsonwebtoken';
-import { ResponseAllCommandes, ResponseCollection, ResponseCommande, ResponseCommandeLinks, ResponseItem, ResponseType } from "../types/ResponseTypes";
-import { isSet } from "util/types";
+import { ResponseAllCommandes, ResponseCollection, ResponseCommande, ResponseItem, ResponseType } from "../types/ResponseTypes";
 import CommandeSchema from "../../database/validateSchema/CommandeSchema";
 import handleDataValidation from "../middleware/handleDataValidation";
 const commandes = express.Router();
@@ -56,13 +55,13 @@ commandes.get("/:id", async (req, res, next) => {
         date_commande: commande.created_at,
         date_livraison: commande.livraison,
         id: commande.id,
-        mail_client: commande.mail,
-        montant: commande.montant,
-        nom_client: commande.nom,
         links: {
           items: { href: "/commande/" + commande.id + "/items/" },
           self: { href: "/commande/" + commande.id }
         },
+        mail_client: commande.mail,
+        montant: commande.montant,
+        nom_client: commande.nom,
       },
 
       type: "resource",
@@ -188,16 +187,16 @@ commandes.post("/", async (req, res, next) => {
       }
       console.log(montant + " update");
 
-      await commande.update({ token: token, montant: montant })
+      await commande.update({ montant: montant, token: token })
 
       const resData = {
         commandes: {
-          nom_client: commande.nom,
-          mail_client: commande.mail,
           date_livraison: commande.livraison,
           id: commande.id,
+          mail_client: commande.mail,
+          montant: montant,
+          nom_client: commande.nom,
           token: token,
-          montant: montant
         },
         type: "resource",
       };
