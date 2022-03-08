@@ -4,6 +4,7 @@ export type ResponseType = {
 
 export type ResponseCollection = {
   count: number
+  size: number
 } & ResponseType;
 
 export type ResponseAllCommandes = {

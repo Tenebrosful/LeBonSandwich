@@ -16,7 +16,8 @@ commandes.get("/", async (req, res, next) => {
   const filter: {
     status?: number
   } = {};
-  const offset = 0;
+  const limit = 10
+  const offset = ((parseInt(req.query.page as string) - 1)|| 0) * limit;
 
   if(req.query.s) {
     filter.status = parseInt(req.query.s as string);
@@ -24,7 +25,7 @@ commandes.get("/", async (req, res, next) => {
 
   try {
     const { count, rows: allCommande } = await Commande.findAndCountAll(
-      { attributes: ["id", "nom", "created_at", "livraison", "status"], order:[["created_at", "ASC"]], where: filter});
+      { attributes: ["id", "nom", "created_at", "livraison", "status"], order:[["created_at", "ASC"]], where: filter, offset, limit});
 
     const resData: ResponseAllCommandes = {
       commandes: allCommande.map(commande => {
@@ -41,6 +42,7 @@ commandes.get("/", async (req, res, next) => {
         };
       }),
       count,
+      size: limit,
       type: "collection",
     };
 
