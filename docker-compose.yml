@@ -1,21 +1,21 @@
 version: "3"
 services:
-  LeBonSandwich_api:
-    container_name: LeBonSandwich_api
+  LeBonSandwich_prise_commande_api:
+    container_name: LeBonSandwich_prise_commande_api
     image: node:17
     depends_on:
       - LeBonSandwich_db
     links:
       - LeBonSandwich_db
     env_file:
-      - ./config/bdd.env
-      - ./config/server.env
-    working_dir: /usr/src/app
+      - ./prise-commande/config/bdd.env
+      - ./prise-commande/config/server.env
+    working_dir: /usr/src/app/prise-commande
     volumes:
-      - .:/usr/src/app
-      - ./node_modules:/usr/src/app/node_modules
+      - ./prise-commande:/usr/src/app
+      - ./prise-commande/node_modules:/usr/src/app/node_modules
     ports:
-      - ${EXPOSED_EXPRESS_PORT}:${EXPRESS_PORT}
+      - ${EXPOSED_EXPRESS_PORT1}:${EXPRESS_PORT}
     command: npm run watch
     networks:
       - LeBonSandwich
@@ -34,7 +34,7 @@ services:
     container_name: LeBonSandwich_db
     image: mariadb:latest
     env_file:
-      - ./config/bdd.env
+      - ./database/config/bdd.env
     volumes:
       - ./db:/var/lib/mysql
       - ./database/schema.sql:/docker-entrypoint-initdb.d/1.sql
