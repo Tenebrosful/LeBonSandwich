@@ -1,15 +1,8 @@
-import * as dotenv from "dotenv";
 import { Sequelize } from "sequelize-typescript";
 import { Dialect } from "sequelize";
 import { Client } from "./models/Client";
 import { Commande } from "./models/Commande";
 import { Item } from "./models/Item";
-
-/**
- * Setup
- */
-
-dotenv.config({ path: "config/bdd.env" });
 
 let BDDInstance: Sequelize;
 
