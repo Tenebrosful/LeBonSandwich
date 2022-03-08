@@ -2,7 +2,7 @@ import * as express from "express";
 import { Commande } from "../database/models/Commande";
 import error405 from "../errors/error405";
 import { ResponseAllCommandes } from "../types/ResponseTypes";
-import { Op, WhereOptions } from "sequelize/dist";
+import { Op, WhereOptions } from "sequelize";
 const commandes = express.Router();
 
 commandes.get("/", async (req, res, next) => {
