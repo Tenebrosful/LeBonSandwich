@@ -206,21 +206,22 @@ commandes.post("/", async (req, res, next) => {
 
         montant = items.map(item => item.quantite * item.tarif).reduce((acc, current) => acc + current);
 
-      await commande.update({ montant: montant, token: token })
+        await commande.update({ montant: montant, token: token })
 
-      const resData = {
-        commandes: {
-          date_livraison: commande.livraison,
-          id: commande.id,
-          mail_client: commande.mail,
-          montant: montant,
-          nom_client: commande.nom,
-          token: token,
-        },
-        type: "resource",
-      };
+        const resData = {
+          commandes: {
+            date_livraison: commande.livraison,
+            id: commande.id,
+            mail_client: commande.mail,
+            montant: montant,
+            nom_client: commande.nom,
+            token: token,
+          },
+          type: "resource",
+        };
 
-      res.status(201).json(resData);
+        res.status(201).json(resData);
+      }
     }
   } catch (error) {
     next(error);
