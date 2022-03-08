@@ -16,7 +16,7 @@ commandes.get("/", async (req, res, next) => {
   const filter: {
     status?: number
   } = {};
-  const limit = 10
+  const limit = parseInt(req.query.size as string) || 10;
   const offset = ((parseInt(req.query.page as string) - 1)|| 0) * limit;
 
   if(req.query.s) {
