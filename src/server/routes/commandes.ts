@@ -148,8 +148,47 @@ commandes.put("/:id", handleToken, async (req, res, next) => {
 
   if (handleDataValidation(CommandeSchema, commandFields, req, res, true)) return;
 
+  let montant = 0;
+
+  if (req.body.items) {
+    const oltItems = await commande.$get("items");
+
+    oltItems.forEach(item => item.destroy());
+
+    let items: RequestItem[] = [];
+
+    if (Array.isArray(req.body.items))
+      items = req.body.items.map((item: RequestItem) => {
+        return {
+          libelle: item.libelle,
+          quantite: item.quantite,
+          tarif: item.tarif,
+          uri: item.uri
+        };
+      });
+    else
+      items[0] = {
+        libelle: req.body.items.libelle,
+        quantite: req.body.items.quantite,
+        tarif: req.body.items.tarif,
+        uri: req.body.items.uri
+      };
+
+    if (!items.every(item => handleDataValidation(CommandeItemSchema, item, req, res, true))) return;
+
+    const promises = items.map((x, i) => {
+      // @ts-ignore
+      items[i].command_id = commande.id;
+      return Item.create(items[i]);
+    });
+
+    await Promise.all(promises);
+
+    montant = items.map(item => item.quantite * item.tarif).reduce((acc, current) => acc + current);
+  }
+
   try {
-    await commande.update(commandFields);
+    await commande.update({...commandFields, montant});
     res.status(204).send();
   } catch (error) {
     error422DatabaseUpdate(error, req, res);
@@ -197,7 +236,7 @@ commandes.post("/", async (req, res, next) => {
             uri: req.body.items.uri
           };
 
-        if(!items.every(item => handleDataValidation(CommandeItemSchema, item, req, res, true))) return;
+        if (!items.every(item => handleDataValidation(CommandeItemSchema, item, req, res, true))) return;
 
         const promises = items.map((x, i) => {
           // @ts-ignore
