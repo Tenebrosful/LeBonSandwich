@@ -4,7 +4,7 @@ import { Item } from "../../database/models/Item";
 import error405 from "../errors/error405";
 import { error422DatabaseUpdate } from "../errors/error422";
 import handleToken from "../middleware/handleToken";
-import * as jwt from 'jsonwebtoken';
+import * as jwt from "jsonwebtoken";
 import { ResponseAllCommandes, ResponseCollection, ResponseCommande, ResponseItem, ResponseType } from "../types/ResponseTypes";
 import CommandeSchema from "../../database/validateSchema/CommandeSchema";
 import handleDataValidation from "../middleware/handleDataValidation";
@@ -170,7 +170,7 @@ commandes.post("/", async (req, res, next) => {
     const commande = await Commande.create({ ...commandFields });
     const token = jwt.sign(
       { token: commande.id },
-      'RANDOM_TOKEN_SECRET');
+      "RANDOM_TOKEN_SECRET");
     commande.token = token;
     if (commande) {
 
@@ -206,7 +206,7 @@ commandes.post("/", async (req, res, next) => {
 
         montant = items.map(item => item.quantite * item.tarif).reduce((acc, current) => acc + current);
 
-        await commande.update({ montant: montant, token: token })
+        await commande.update({ montant: montant, token: token });
 
         const resData = {
           commandes: {
