@@ -1,6 +1,6 @@
 import * as express from "express";
 import * as dotenv from "dotenv";
-import { initBDD } from "../database/database";
+import { initBDD } from "../../database/src/database";
 
 import logger from "./middleware/logger";
 import * as bodyParser from "body-parser";
