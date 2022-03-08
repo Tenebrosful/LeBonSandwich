@@ -10,12 +10,32 @@ services:
     env_file:
       - ./prise-commande/config/bdd.env
       - ./prise-commande/config/server.env
-    working_dir: /usr/src/app/prise-commande
+    working_dir: /usr/src/app
     volumes:
       - ./prise-commande:/usr/src/app
       - ./prise-commande/node_modules:/usr/src/app/node_modules
     ports:
       - ${EXPOSED_EXPRESS_PORT1}:${EXPRESS_PORT}
+    command: npm run watch
+    networks:
+      - LeBonSandwich
+
+  LeBonSandwich_suivi_fabrication_api:
+    container_name: LeBonSandwich_suivi_fabrication_api
+    image: node:17
+    depends_on:
+      - LeBonSandwich_db
+    links:
+      - LeBonSandwich_db
+    env_file:
+      - ./suivi-fabrication/config/bdd.env
+      - ./suivi-fabrication/config/server.env
+    working_dir: /usr/src/app
+    volumes:
+      - ./suivi-fabrication:/usr/src/app
+      - ./suivi-fabrication/node_modules:/usr/src/app/node_modules
+    ports:
+      - ${EXPOSED_EXPRESS_PORT2}:${EXPRESS_PORT}
     command: npm run watch
     networks:
       - LeBonSandwich
