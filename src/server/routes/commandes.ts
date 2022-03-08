@@ -9,6 +9,7 @@ import { ResponseAllCommandes, ResponseCollection, ResponseCommande, ResponseIte
 import CommandeSchema from "../../database/validateSchema/CommandeSchema";
 import handleDataValidation from "../middleware/handleDataValidation";
 import { RequestItem } from "../types/RequestTypes";
+import CommandeItemSchema from "../../database/validateSchema/CommandeItemSchema";
 const commandes = express.Router();
 
 commandes.get("/", async (req, res, next) => {
@@ -195,6 +196,8 @@ commandes.post("/", async (req, res, next) => {
             tarif: req.body.items.tarif,
             uri: req.body.items.uri
           };
+
+        if(!items.every(item => handleDataValidation(CommandeItemSchema, item, req, res, true))) return;
 
         const promises = items.map((x, i) => {
           // @ts-ignore
