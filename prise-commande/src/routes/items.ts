@@ -1,5 +1,5 @@
 import * as express from "express";
-import { Item } from "../../../../database/models/Item";
+import { Item } from "../../../database/src/models/Item";
 import error405 from "../errors/error405";
 const items = express.Router();
 

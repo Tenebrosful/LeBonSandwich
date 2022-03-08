@@ -36,6 +36,8 @@ jobs:
           npm ci
           cd prise-commande
           npm ci
+          cd ../database
+          npm ci
 
       - name: Compile TypeScript
         run: tsc

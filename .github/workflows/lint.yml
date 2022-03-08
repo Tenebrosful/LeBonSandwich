@@ -18,6 +18,8 @@ jobs:
           npm ci
           cd prise-commande
           npm ci
+          cd ../database
+          npm ci
     
       - name: Run Stylelint css
         run: npm run stylelint-css
@@ -33,6 +35,8 @@ jobs:
         run: |
           npm ci
           cd prise-commande
+          npm ci
+          cd ../database
           npm ci
     
       - name: Run Stylelint scss
@@ -50,6 +54,8 @@ jobs:
           npm ci
           cd prise-commande
           npm ci
+          cd ../database
+          npm ci
     
       - name: Run ESLint
         run: npm run eslint
@@ -66,6 +72,8 @@ jobs:
           npm ci
           cd prise-commande
           npm ci
+          cd ../database
+          npm ci
     
       - name: Run HTML-Validate
         run: npm run html-validate
@@ -81,6 +89,8 @@ jobs:
         run: |
           npm ci
           cd prise-commande
+          npm ci
+          cd ../database
           npm ci
     
       - name: Run ejs-Validate
