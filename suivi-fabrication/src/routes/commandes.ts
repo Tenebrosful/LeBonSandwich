@@ -1,40 +1,39 @@
 import * as express from "express";
 import { Commande } from "../database/models/Commande";
-import { Item } from "../database/models/Item";
 import error405 from "../errors/error405";
-import { error422DatabaseUpdate } from "../errors/error422";
-import handleToken from "../middleware/handleToken";
-import * as jwt from "jsonwebtoken";
-import { ResponseAllCommandes, ResponseCollection, ResponseCommande, ResponseItem, ResponseType } from "../types/ResponseTypes";
-import CommandeSchema from "../database/validateSchema/CommandeSchema";
-import handleDataValidation from "../middleware/handleDataValidation";
-import { RequestItem } from "../types/RequestTypes";
-import CommandeItemSchema from "../database/validateSchema/CommandeItemSchema";
+import { ResponseAllCommandes } from "../types/ResponseTypes";
+import { Op, WhereOptions } from "sequelize/dist";
 const commandes = express.Router();
 
 commandes.get("/", async (req, res, next) => {
-  const filter: {
-    status?: number
-  } = {};
-  const limit = parseInt(req.query.size as string) || 10;
-  const offset = ((parseInt(req.query.page as string) - 1)|| 0) * limit;
+  const filter: WhereOptions<any> = {};
+  const limit = Math.max(parseInt(req.query.size as string) || 10, 0);
+  const offset = Math.max(((parseInt(req.query.page as string) - 1) || 0) * limit, 0);
 
-  if(req.query.s) {
-    filter.status = parseInt(req.query.s as string);
-  }
+  if (req.query.s) 
+    if (Array.isArray(req.query.s))
+      filter.status = {[Op.or]: (req.query.s as string[]).map(s => parseInt(s, 10) || -1)};
+    else
+      filter.status = parseInt(req.query.s as string) || -1;
 
   try {
     const { count, rows: allCommande } = await Commande.findAndCountAll(
-      { attributes: ["id", "nom", "created_at", "livraison", "status"], order:[["created_at", "ASC"]], where: filter, offset, limit});
+      {
+        attributes: ["id", "nom", "created_at", "livraison", "status"],
+        limit,
+        offset,
+        order: [["created_at", "ASC"]],
+        where: filter
+      });
 
     const resData: ResponseAllCommandes = {
       commandes: allCommande.map(commande => {
         return {
           created_at: commande.created_at,
           id: commande.id,
-          links:{
-            items: {href: `/commands/${commande.id}/items` },
-            self: {href: `/commands/${commande.id}/` }
+          links: {
+            items: { href: `/commands/${commande.id}/items` },
+            self: { href: `/commands/${commande.id}/` }
           },
           livraison: commande.livraison,
           nom: commande.mail,
