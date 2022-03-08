@@ -1,5 +1,5 @@
 import * as express from "express";
-import { initBDD } from "../../database/src/database";
+import { initBDD } from "./database/database";
 
 import logger from "./middleware/logger";
 import * as bodyParser from "body-parser";

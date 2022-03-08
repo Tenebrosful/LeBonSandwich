@@ -1,15 +1,15 @@
 import * as express from "express";
-import { Commande } from "../../../database/src/models/Commande";
-import { Item } from "../../../database/src/models/Item";
+import { Commande } from "../database/models/Commande";
+import { Item } from "../database/models/Item";
 import error405 from "../errors/error405";
 import { error422DatabaseUpdate } from "../errors/error422";
 import handleToken from "../middleware/handleToken";
 import * as jwt from "jsonwebtoken";
 import { ResponseAllCommandes, ResponseCollection, ResponseCommande, ResponseItem, ResponseType } from "../types/ResponseTypes";
-import CommandeSchema from "../../../database/src/validateSchema/CommandeSchema";
+import CommandeSchema from "../database/validateSchema/CommandeSchema";
 import handleDataValidation from "../middleware/handleDataValidation";
 import { RequestItem } from "../types/RequestTypes";
-import CommandeItemSchema from "../../../database/src/validateSchema/CommandeItemSchema";
+import CommandeItemSchema from "../database/validateSchema/CommandeItemSchema";
 const commandes = express.Router();
 
 commandes.get("/", async (req, res, next) => {
