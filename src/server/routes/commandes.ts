@@ -146,7 +146,7 @@ commandes.put("/:id", handleToken, async (req, res, next) => {
     nom: req.body.nom
   };
 
-  if (handleDataValidation(CommandeSchema, commandFields, req, res, true)) return;
+  if (!handleDataValidation(CommandeSchema, commandFields, req, res, true)) return;
 
   let montant = 0;
 
@@ -204,7 +204,7 @@ commandes.post("/", async (req, res, next) => {
     nom: req.body.nom,
   };
 
-  if (handleDataValidation(CommandeSchema, commandFields, req, res, true)) return;
+  if (!handleDataValidation(CommandeSchema, commandFields, req, res, true)) return;
 
   try {
     const commande = await Commande.create({ ...commandFields });
