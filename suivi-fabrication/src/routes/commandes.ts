@@ -13,9 +13,18 @@ import CommandeItemSchema from "../database/validateSchema/CommandeItemSchema";
 const commandes = express.Router();
 
 commandes.get("/", async (req, res, next) => {
+  const filter: {
+    status?: number
+  } = {};
+  const offset = 0;
+
+  if(req.query.s) {
+    filter.status = parseInt(req.query.s as string);
+  }
+
   try {
     const { count, rows: allCommande } = await Commande.findAndCountAll(
-      { attributes: ["id", "nom", "created_at", "livraison", "status"], order:[["created_at", "ASC"]] });
+      { attributes: ["id", "nom", "created_at", "livraison", "status"], order:[["created_at", "ASC"]], where: filter});
 
     const resData: ResponseAllCommandes = {
       commandes: allCommande.map(commande => {
@@ -40,7 +49,6 @@ commandes.get("/", async (req, res, next) => {
     next(error);
   }
 });
-
 
 commandes.use("/", error405);
 
