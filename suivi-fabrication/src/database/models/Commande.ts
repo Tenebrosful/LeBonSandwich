@@ -1,5 +1,5 @@
 import { BelongsTo, Column, CreatedAt, DataType, Default, ForeignKey, HasMany, IsDate, IsEmail, Model, PrimaryKey, Table, UpdatedAt } from "sequelize-typescript";
-import { Client } from "./Client";
+import { User } from "./User";
 import { Item } from "./Item";
 
 @Table({tableName: "commande"})
@@ -42,12 +42,12 @@ export class Commande extends Model {
   token : string;
 
   @Default(null)
-  @ForeignKey(() => Client)
+  @ForeignKey(() => User)
   @Column(DataType.INTEGER)
-  client_id: number;
+  user_id: number;
 
-  @BelongsTo(() => Client, "client_id")
-  client: Client;
+  @BelongsTo(() => User, "user_id")
+  user: User;
 
   @Default(null)
   @Column(DataType.STRING(128))
