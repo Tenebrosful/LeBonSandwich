@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
+    "typeRoots": ["./node_modules/@types"],
     "resolveJsonModule": true,
     "module": "commonjs",
     "target": "ES2021",
