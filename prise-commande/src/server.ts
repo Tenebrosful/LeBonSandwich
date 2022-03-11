@@ -1,6 +1,5 @@
 import * as express from "express";
-import * as dotenv from "dotenv";
-import { initBDD } from "../database/database";
+import { initBDD } from "./database/database";
 
 import logger from "./middleware/logger";
 import * as bodyParser from "body-parser";
@@ -10,8 +9,6 @@ import clients from "./routes/clients";
 
 import error400 from "./errors/error400";
 import error500 from "./errors/error500";
-
-dotenv.config({ path: "config/server.env" });
 
 const app = express();
 const port = process.env.EXPRESS_PORT || 3000;

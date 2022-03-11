@@ -22,17 +22,45 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-      - run: npm ci
+      - run: |
+          npm ci
+          cd prise-commande
+          npm ci
+          cd ../suivi-fabrication
+          npm ci
 
-  tsc:
-    name: Typescript Compile
+  tsc-prise-commande:
+    name: Typescript Compile Prise Commande
     runs-on: ubuntu-latest
     steps:
       - name: check out code 🛎
         uses: actions/checkout@v2
 
       - name: npm ci
-        run: npm ci
+        run: |
+          npm ci
+          cd prise-commande
+          npm ci
 
       - name: Compile TypeScript
-        run: tsc
+        run: |
+          cd prise-commande
+          tsc
+
+  tsc-suivi-fabrication:
+    name: Typescript Compile Suivi Fabrication
+    runs-on: ubuntu-latest
+    steps:
+      - name: check out code 🛎
+        uses: actions/checkout@v2
+
+      - name: npm ci
+        run: |
+          npm ci
+          cd suivi-fabrication
+          npm ci
+
+      - name: Compile TypeScript
+        run: |
+          cd suivi-fabrication
+          tsc
