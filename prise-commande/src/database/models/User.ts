@@ -1,12 +1,12 @@
 import { AutoIncrement, Column, CreatedAt, DataType, Default, HasMany, IsEmail, Model, PrimaryKey, Table, UpdatedAt } from "sequelize-typescript";
 import { Commande } from "./Commande";
 
-@Table({tableName: "client"})
-export class Client extends Model {
+@Table({tableName: "user"})
+export class User extends Model {
   @PrimaryKey
-  @AutoIncrement
-  @Column(DataType.INTEGER)
-  id: number;
+  @Default(DataType.UUIDV4)
+  @Column(DataType.UUID)
+  id: string;
 
   @Default(null)
   @CreatedAt
@@ -19,11 +19,11 @@ export class Client extends Model {
   updated_at: Date;
 
   @Column(DataType.STRING(128))
-  nom_client: string;
+  nom: string;
 
   @IsEmail
   @Column(DataType.STRING(256))
-  mail_client: string;
+  mail: string;
 
   @Column({ type: DataType.STRING(256) })
   passwd: string;
@@ -32,7 +32,15 @@ export class Client extends Model {
   @Column(DataType.DECIMAL(8, 2))
   cumul_achats: number;
 
-  @HasMany(() => Commande, "client_id")
+  @Default(null)
+  @Column(DataType.STRING(128))
+  token : string;
+
+  @Default(0)
+  @Column(DataType.INTEGER)
+  status: number;
+
+  @HasMany(() => Commande, "user_id")
   commandes: Commande[];
 
 }
