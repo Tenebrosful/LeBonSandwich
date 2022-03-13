@@ -18,9 +18,9 @@ users.post("/", async (req, res, next) => {
 
   if (!handleDataValidation(UserSchema, userFields, req, res, true)) return;
 
-  if (req.body.status) {
+  if (req.body.status) 
     (userFields as any).status = req.body.status;
-  }
+  
 
   userFields.passwd = passwordHash(userFields.passwd);
 
@@ -33,7 +33,7 @@ users.post("/", async (req, res, next) => {
         status: user.status,
         token: user.id,
       },
-      "RANDOM_TOKEN_SECRET", { expiresIn: '1h' });
+      "RANDOM_TOKEN_SECRET", { expiresIn: "1h" });
     user.token = token;
     if (user) {
 
@@ -88,12 +88,12 @@ users.post("/auth", async (req, res, next) => {
           status: user.status,
           token: user.id,
         },
-        "RANDOM_TOKEN_SECRET", { expiresIn: '1h' });
+        "RANDOM_TOKEN_SECRET", { expiresIn: "1h" });
       res.status(200).json({ token });
     } else {
       res.status(403).json({
         code: 403,
-        message: `Password is not valid`
+        message: "Password is not valid"
       });
 
       return;
