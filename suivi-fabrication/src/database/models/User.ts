@@ -1,4 +1,4 @@
-import { AutoIncrement, Column, CreatedAt, DataType, Default, HasMany, IsEmail, Model, PrimaryKey, Table, UpdatedAt } from "sequelize-typescript";
+import { Column, CreatedAt, DataType, Default, HasMany, IsEmail, Model, PrimaryKey, Table, UpdatedAt } from "sequelize-typescript";
 import { Commande } from "./Commande";
 
 @Table({tableName: "user"})
