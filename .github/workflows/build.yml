@@ -28,6 +28,8 @@ jobs:
           npm ci
           cd ../suivi-fabrication
           npm ci
+          cd ../authentification
+          npm ci
 
   tsc-prise-commande:
     name: Typescript Compile Prise Commande
@@ -63,4 +65,22 @@ jobs:
       - name: Compile TypeScript
         run: |
           cd suivi-fabrication
+          tsc
+
+  tsc-authentification:
+    name: Typescript Compile Authentification
+    runs-on: ubuntu-latest
+    steps:
+      - name: check out code 🛎
+        uses: actions/checkout@v2
+
+      - name: npm ci
+        run: |
+          npm ci
+          cd authentification
+          npm ci
+
+      - name: Compile TypeScript
+        run: |
+          cd authentification
           tsc

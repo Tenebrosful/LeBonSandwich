@@ -15,7 +15,7 @@ services:
       - ./prise-commande:/usr/src/app
       - ./prise-commande/node_modules:/usr/src/app/node_modules
     ports:
-      - ${EXPOSED_EXPRESS_PORT1}:${EXPRESS_PORT}
+      - ${EXPOSED_EXPRESS_PORT_PRISE_COMMANDE}:${EXPRESS_PORT}
     command: npm run watch
     networks:
       - LeBonSandwich
@@ -35,7 +35,27 @@ services:
       - ./suivi-fabrication:/usr/src/app
       - ./suivi-fabrication/node_modules:/usr/src/app/node_modules
     ports:
-      - ${EXPOSED_EXPRESS_PORT2}:${EXPRESS_PORT}
+      - ${EXPOSED_EXPRESS_PORT_SUIVI_FABRICATION}:${EXPRESS_PORT}
+    command: npm run watch
+    networks:
+      - LeBonSandwich
+    
+  LeBonSandwich_authentification_api:
+    container_name: LeBonSandwich_authentification_api
+    image: node:17
+    depends_on:
+      - LeBonSandwich_db
+    links:
+      - LeBonSandwich_db
+    env_file:
+      - ./authentification/config/bdd.env
+      - ./authentification/config/server.env
+    working_dir: /usr/src/app
+    volumes:
+      - ./authentification:/usr/src/app
+      - ./authentification/node_modules:/usr/src/app/node_modules
+    ports:
+      - ${EXPOSED_EXPRESS_PORT_AUTHENTIFICATION}:${EXPRESS_PORT}
     command: npm run watch
     networks:
       - LeBonSandwich

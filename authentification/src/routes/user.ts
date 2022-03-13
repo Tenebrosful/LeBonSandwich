@@ -1,0 +1,110 @@
+import * as express from "express";
+import { User } from "../database/models/User";
+import UserSchema from "../database/validateSchema/UserSchema";
+import ConnectionSchema from "../database/validateSchema/ConnectionSchema";
+import handleDataValidation from "../middleware/handleDataValidation";
+import * as jwt from "jsonwebtoken";
+import error405 from "../errors/error405";
+import { generate as passwordHash, verify as passwordVerify } from "password-hash";
+const users = express.Router();
+
+users.post("/", async (req, res, next) => {
+
+  const userFields = {
+    mail: req.body.mail,
+    nom: req.body.nom,
+    passwd: req.body.passwd,
+  };
+
+  if (!handleDataValidation(UserSchema, userFields, req, res, true)) return;
+
+  if (req.body.status) {
+    (userFields as any).status = req.body.status;
+  }
+
+  userFields.passwd = passwordHash(userFields.passwd);
+
+  try {
+    const user = await User.create({ ...userFields });
+    const token = jwt.sign(
+      {
+        mail: user.mail,
+        nom: user.nom,
+        status: user.status,
+        token: user.id,
+      },
+      "RANDOM_TOKEN_SECRET", { expiresIn: '1h' });
+    user.token = token;
+    if (user) {
+
+      const resData = {
+        type: "resource",
+        user: {
+          created_at: user.created_at,
+          mail: user.mail,
+          nom: user.nom,
+          token: token,
+        },
+      };
+
+      res.status(201).json(resData);
+    }
+  } catch (error) {
+    next(error);
+  }
+
+});
+
+users.post("/auth", async (req, res, next) => {
+
+  const userFields = {
+    mail: req.body.mail,
+    passwd: req.body.passwd,
+  };
+
+  if (!handleDataValidation(ConnectionSchema, userFields, req, res, true)) return;
+
+  try {
+    const user = await User.findOne(
+      {
+        attributes: ["id", "mail", "nom", "created_at", "cumul_achats", "status", "passwd"],
+        where: { mail: req.body.mail }
+
+      });
+
+    if (!user) {
+      res.status(404).json({
+        code: 404,
+        message: `No user found with mail ${userFields.mail}`
+      });
+      return;
+    }
+
+    if (passwordVerify(userFields.passwd, user.passwd)) {
+      const token = jwt.sign(
+        {
+          mail: user.mail,
+          nom: user.nom,
+          status: user.status,
+          token: user.id,
+        },
+        "RANDOM_TOKEN_SECRET", { expiresIn: '1h' });
+      res.status(200).json({ token });
+    } else {
+      res.status(403).json({
+        code: 403,
+        message: `Password is not valid`
+      });
+
+      return;
+    }
+
+  } catch (error) {
+    next(error);
+  }
+
+});
+
+users.use("/", error405);
+
+export default users;

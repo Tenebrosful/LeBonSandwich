@@ -4,7 +4,7 @@ import { initBDD } from "./database/database";
 import logger from "./middleware/logger";
 import * as bodyParser from "body-parser";
 
-import commandes from "./routes/commandes";
+import users from "./routes/user";
 
 import error400 from "./errors/error400";
 import error500 from "./errors/error500";
@@ -19,10 +19,7 @@ app.use(logger);
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-app.use("/api/commande", commandes);
-
-import items from "./routes/items";
-app.use("/api/items", items);
+app.use("/api/user", users);
 
 /**
  * Handle Errors
