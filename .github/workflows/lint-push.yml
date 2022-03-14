@@ -123,6 +123,9 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: js-ts-linted
+          
+      - name: Display Tree dir
+        run: ls -a -l
     
       - name: Commit files
         continue-on-error: true
