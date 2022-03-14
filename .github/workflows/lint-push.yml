@@ -49,6 +49,7 @@ jobs:
           name: scss-linted
           path: | 
             ./**/*.scss
+            !node_modules/
             !prise-commande/node_modules/
             !suivi-fabrication/node_modules/
             !authentification/node_modules/
@@ -72,6 +73,7 @@ jobs:
           path: | 
             ./**/*.ts
             ./**/*.js
+            !node_modules/
             !prise-commande/node_modules/
             !suivi-fabrication/node_modules/
             !authentification/node_modules/
