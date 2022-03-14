@@ -125,7 +125,14 @@ jobs:
           name: js-ts-linted
           
       - name: Display Tree dir
-        run: ls -a -l
+        run: tree
+        
+      - name: Display dirs
+        run: |
+          ls -l -a
+          ls -l -a authentification
+          ls -l -a prise-commande
+          ls -l -a suivi-fabrication
     
       - name: Commit files
         continue-on-error: true
