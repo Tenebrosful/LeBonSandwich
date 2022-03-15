@@ -54,9 +54,68 @@ services:
     volumes:
       - ./authentification:/usr/src/app
       - ./authentification/node_modules:/usr/src/app/node_modules
-    ports:
-      - ${EXPOSED_EXPRESS_PORT_AUTHENTIFICATION}:${EXPRESS_PORT}
     command: npm run watch
+    networks:
+      - LeBonSandwich
+
+  LeBonSandwich_gateway_api:
+    container_name: LeBonSandwich_gateway_api
+    image: node:17
+    env_file:
+      - ./gateway-front/config/service.env
+      - ./gateway-front/config/server.env
+    working_dir: /usr/src/app
+    volumes:
+      - ./gateway-front:/usr/src/app
+      - ./gateway-front/node_modules:/usr/src/app/node_modules
+    ports:
+      - ${EXPOSED_EXPRESS_PORT_GATEWAY}:${EXPRESS_PORT}
+    command: npm run watch
+    networks:
+      - LeBonSandwich
+
+
+  cache:
+    container_name: cache
+    image: redis:6
+    networks:
+      - LeBonSandwich
+
+  directus:
+    container_name: directus
+    image: directus/directus:latest
+    ports:
+      - 8055:8055
+    volumes:
+      # By default, uploads are stored in /directus/uploads
+      # Always make sure your volumes matches the storage root when using
+      # local driver
+      - ./uploads:/directus/uploads
+      # Make sure to also mount the volume when using SQLite
+      # - ./database:/directus/database
+      # If you want to load extensions from the host
+      # - ./extensions:/directus/extensions
+    depends_on:
+      - cache
+      - LeBonSandwich_db
+    env_file:
+      - ./database/config/bdd.env
+    environment:
+      KEY: '255d861b-5ea1-5996-9aa3-922530ec40b1'
+      SECRET: '6116487b-cda1-52c2-b5b5-c8022c45e263'
+      DB_CLIENT: ${BDD_DRIVER}
+      DB_HOST: ${MYSQL_HOST}
+      DB_PORT: ${MYSQL_PORT}
+      DB_DATABASE: ${MYSQL_DATABASE}
+      DB_USER: ${MYSQL_USER}
+      DB_PASSWORD: ${MYSQL_PASSWORD}
+
+      CACHE_ENABLED: 'true'
+      CACHE_STORE: 'redis'
+      CACHE_REDIS: 'redis://cache:6379'
+
+      ADMIN_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+
     networks:
       - LeBonSandwich
 
