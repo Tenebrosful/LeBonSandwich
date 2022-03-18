@@ -218,13 +218,13 @@ commandes.post("/", async (req, res, next) => {
   if(!tokenData) return;
 
   const commandFields = {
+    //@ts-ignore
+    client_id: tokenData.id,
     livraison: req.body.livraison,
     //@ts-ignore
     mail: tokenData.mail,
     //@ts-ignore
     nom: tokenData.nom,
-    //@ts-ignore
-    client_id: tokenData.id,
   };
 
   if (!handleDataValidation(CommandeSchema, commandFields, req, res, true)) return;

@@ -1,4 +1,3 @@
-import { decode, verify } from "jsonwebtoken";
 import error401 from "../errors/error401";
 import axios from "axios";
 import { NextFunction, Request, Response } from "express";
