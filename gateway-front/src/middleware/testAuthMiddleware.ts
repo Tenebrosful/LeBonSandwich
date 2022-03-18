@@ -11,31 +11,19 @@ export default async function testAuthMiddleware(req: Request, res: Response, ne
           });
     } else {
         res.locals.token = req.query.token || req.headers["x-lbs-token"];
-        verify(res.locals.token, 'RANDOM_TOKEN_SECRET', (err: any, decode: any) => {
-                if (err) {
-                    res.status(403).json({
-                        code: 403,
-                        message: err.message
-                    });
-                } else {
-
-                    try {
-                        axios.post(`${process.env.AUTHENTIFICATION}/tokenVerify`, {}, { headers:{authorization: ""+ res.locals.token}})
-                          .then(function () {
-                            res.status(201);
-                          })
-                          .catch(function (error) {
-                            next(error);
-                          });
-                    
-                      } catch (error) {
-                        next(error);
-                      }
-                }
+        try {
+          axios.post(`${process.env.AUTHENTIFICATION}/tokenVerify`, {}, { headers:{authorization: ""+ res.locals.token}})
+            .then(function () {
+              next();
             })
+            .catch(function (error) {
+              next(error);
+            });
+            return;
+        } catch (error) {
+          next(error);
+        }
     }
-  
-    if (res.locals.token) { next(); return; }
   
     error401(req, res);
   }

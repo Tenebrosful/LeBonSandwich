@@ -6,6 +6,6 @@ import { Request, Response } from "express";
 export default function error400(req: Request, res: Response) {
   res.status(400).json({
     code: 400,
-    message: `URL ${req.url} inconnue`
+    message: `[Gateway] URL ${req.url} inconnue`
   });
 }

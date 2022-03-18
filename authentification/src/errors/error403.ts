@@ -6,6 +6,6 @@ import { Request, Response } from "express";
 export default function error403(req: Request, res: Response) {
   res.status(400).json({
     code: 403,
-    message: "Access Forbidden"
+    message: "[Auth API] Access Forbidden"
   });
 }

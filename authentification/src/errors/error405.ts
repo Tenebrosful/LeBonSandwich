@@ -6,6 +6,6 @@ import { Request, Response } from "express";
 export default function error405(req: Request, res: Response) {
   res.status(405).json({
     code: 405,
-    message: "Méthode non-autorisée"
+    message: "[Auth API] Méthode non-autorisée"
   });
 }

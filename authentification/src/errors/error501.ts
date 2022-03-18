@@ -6,6 +6,6 @@ import { Request, Response } from "express";
 export default function error501(req: Request, res: Response) {
   res.status(501).json({
     code: 501,
-    message: "Fonctionnalité non-implémentée"
+    message: "[Auth API] Fonctionnalité non-implémentée"
   });
 }
