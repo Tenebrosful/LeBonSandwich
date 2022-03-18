@@ -10,6 +10,7 @@ import CommandeSchema from "../database/validateSchema/CommandeSchema";
 import handleDataValidation from "../middleware/handleDataValidation";
 import { RequestItem } from "../types/RequestTypes";
 import CommandeItemSchema from "../database/validateSchema/CommandeItemSchema";
+import error403 from "../errors/error403";
 const commandes = express.Router();
 
 commandes.get("/", async (req, res, next) => {
@@ -297,6 +298,23 @@ commandes.post("/", async (req, res, next) => {
 
 
 commandes.patch("/:id", handleToken, async (req, res, next) => {
+
+  let tokenData;
+
+  jwt.verify((res.locals.token) as string, process.env.SECRETPASSWDTOKEN || "", (err: any, decode: any) => {
+    if (err) 
+      res.status(403).json({
+        code: 403,
+        message: err.message
+      });
+      
+     else 
+      tokenData = decode;
+    
+  });
+  
+  if(!tokenData) return;
+  
   const commande = await Commande.findOne(
     {
       where: { id: req.params.id }
@@ -310,12 +328,11 @@ commandes.patch("/:id", handleToken, async (req, res, next) => {
     return;
   }
 
-  if (commande.token !== res.locals.token) error405(req, res);
+  // @ts-ignore
+  if (commande.token !== res.locals.token) error403(req, res);
 
   const commandFields = {
-    livraison: req.body.livraison,
-    mail: req.body.mail,
-    nom: req.body.nom
+    livraison: req.body.livraison
   };
 
   if (handleDataValidation(CommandeSchema, commandFields, req, res)) return;

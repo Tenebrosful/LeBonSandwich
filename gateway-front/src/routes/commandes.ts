@@ -3,6 +3,7 @@ import * as jwt from "jsonwebtoken";
 import * as express from "express";
 import error405 from "../errors/error405";
 import testAuthMiddleware from "../middleware/testAuthMiddleware";
+import testCommandeMiddleware from "../middleware/testCommandeMiddleware";
 const commandes = express.Router();
 
 commandes.get("/", testAuthMiddleware, async (req, res, next) => {
@@ -43,6 +44,24 @@ commandes.post("/", testAuthMiddleware, async (req, res, next) => {
   try {
     // @ts-ignore
     axios.post(`${process.env.PRISE_COMMANDE}/commande`, req.body, { headers:{authorization: ""+ res.locals.token}})
+      .then(function (response) {
+        res.status(201).json(response.data);
+      })
+      .catch(function (error) {
+        next(error);
+      });
+
+  } catch (error) {
+    next(error);
+  }
+  
+});
+
+commandes.patch("/:id", testCommandeMiddleware, async (req, res, next) => {
+
+  try {
+    // @ts-ignore
+    axios.post(`${process.env.PRISE_COMMANDE}/commande/${req.params.id}`, req.body, { headers:{authorization: ""+ res.locals.tokenCommande}})
       .then(function (response) {
         res.status(201).json(response.data);
       })

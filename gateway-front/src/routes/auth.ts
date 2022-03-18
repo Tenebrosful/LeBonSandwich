@@ -6,7 +6,7 @@ const auth = express.Router();
 auth.post("/signin", async (req, res, next) => {
 
   try {
-    axios.post(`${process.env.AUTHENTIFICATION}/`, req.body)
+    axios.post(`${process.env.AUTHENTIFICATION}/auth`, req.body)
       .then(function (response) {
         res.status(201).send(response.data);
       })
