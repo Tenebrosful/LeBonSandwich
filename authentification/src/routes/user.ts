@@ -83,7 +83,11 @@ users.post("/auth", async (req, res, next) => {
 
     if (passwordVerify(userFields.passwd, user.passwd)) {
       const token = jwt.sign(
-        { id: user.id, status: user.status, nom: user.nom, mail: user.mail },
+        { id: user.id, 
+          mail: user.mail, 
+          nom: user.nom, 
+          status: user.status, 
+        },
         process.env.SECRETPASSWDTOKEN || '', { expiresIn: '1h' });
       res.status(200).json({ token });
     } else {
