@@ -21,34 +21,34 @@ users.post("/", async (req, res, next) => {
 
   if (req.body.status) {
     (userFields as any).status = req.body.status;
-  
 
-  userFields.passwd = passwordHash(userFields.passwd);
 
-  try {
-    const user = await User.create({ ...userFields });
-    const token = jwt.sign(
-      { id: user.id, status: user.status, nom: user.nom, mail: user.mail },
-      process.env.SECRETPASSWDTOKEN || '', { expiresIn: '1h' });
-    user.token = token;
-    if (user) {
+    userFields.passwd = passwordHash(userFields.passwd);
 
-      const resData = {
-        type: "resource",
-        user: {
-          created_at: user.created_at,
-          mail: user.mail,
-          nom: user.nom,
-          token: token,
-        },
-      };
+    try {
+      const user = await User.create({ ...userFields });
+      const token = jwt.sign(
+        { id: user.id, status: user.status, nom: user.nom, mail: user.mail },
+        process.env.SECRETPASSWDTOKEN || '', { expiresIn: '1h' });
+      user.token = token;
+      if (user) {
 
-      res.status(201).json(resData);
+        const resData = {
+          type: "resource",
+          user: {
+            created_at: user.created_at,
+            mail: user.mail,
+            nom: user.nom,
+            token: token,
+          },
+        };
+
+        res.status(201).json(resData);
+      }
+    } catch (error) {
+      next(error);
     }
-  } catch (error) {
-    next(error);
   }
-
 });
 
 users.post("/auth", async (req, res, next) => {
@@ -98,7 +98,7 @@ users.post("/auth", async (req, res, next) => {
 });
 
 users.post("/tokenVerify", async (req, res, next) => {
-  
+
   let tokenData
 
   jwt.verify(req.headers['authorization'] as string, process.env.SECRETPASSWDTOKEN || '', (err: any, decode: any) => {
@@ -107,13 +107,13 @@ users.post("/tokenVerify", async (req, res, next) => {
         code: 403,
         message: err.message
       });
-      
+
     } else {
       tokenData = decode;
     }
   })
 
-  if(!tokenData) return;
+  if (!tokenData) return;
 
   try {
     const user = await User.findOne(
@@ -133,8 +133,8 @@ users.post("/tokenVerify", async (req, res, next) => {
       });
       return;
     }
-      
-      res.status(200).json(user);
+
+    res.status(200).json(user);
 
   } catch (error) {
     next(error);
