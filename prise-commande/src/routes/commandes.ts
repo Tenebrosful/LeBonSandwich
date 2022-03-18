@@ -37,10 +37,12 @@ commandes.get("/", async (req, res, next) => {
 });
 
 commandes.get("/:id", async (req, res, next) => {
+
   try {
     const commande = await Commande.findOne(
       {
         attributes: ["id", "mail", "nom", "created_at", "livraison", "montant"],
+        // @ts-ignore
         where: { id: req.params.id }
       });
 
@@ -87,6 +89,7 @@ commandes.get("/:id", async (req, res, next) => {
     next(error);
   }
 });
+
 
 commandes.get("/:id/items", async (req, res, next) => {
   try {
@@ -198,10 +201,30 @@ commandes.put("/:id", handleToken, async (req, res, next) => {
 
 commandes.post("/", async (req, res, next) => {
 
+  let tokenData;
+
+  jwt.verify((res.locals.token = req.headers['authorization']) as string, process.env.SECRETPASSWDTOKEN || '', (err: any, decode: any) => {
+    if (err) {
+      res.status(403).json({
+        code: 403,
+        message: err.message
+      });
+      
+    } else {
+      tokenData = decode;
+    }
+  })
+  
+  if(!tokenData) return;
+
   const commandFields = {
+    //@ts-ignore
+    client_id: tokenData.id,
     livraison: req.body.livraison,
-    mail: req.body.mail,
-    nom: req.body.nom,
+    //@ts-ignore
+    mail: tokenData.mail,
+    //@ts-ignore
+    nom: tokenData.nom,
   };
 
   if (!handleDataValidation(CommandeSchema, commandFields, req, res, true)) return;
@@ -210,10 +233,10 @@ commandes.post("/", async (req, res, next) => {
     const commande = await Commande.create({ ...commandFields });
     const token = jwt.sign(
       { token: commande.id },
-      "RANDOM_TOKEN_SECRET");
+      process.env.SECRETPASSWDTOKEN || '');
     commande.token = token;
     if (commande) {
-
+      
       let montant = 0;
 
       if (req.body.items) {
@@ -250,6 +273,8 @@ commandes.post("/", async (req, res, next) => {
 
         await commande.update({ montant: montant, token: token });
 
+      }
+
         const resData = {
           commandes: {
             date_livraison: commande.livraison,
@@ -261,9 +286,8 @@ commandes.post("/", async (req, res, next) => {
           },
           type: "resource",
         };
-
+        
         res.status(201).json(resData);
-      }
     }
   } catch (error) {
     next(error);

@@ -31,7 +31,7 @@ CREATE TABLE `commande` (
   `montant` decimal(8,2) DEFAULT 0,
   `remise` decimal(8,2) DEFAULT NULL,
   `token` varchar(300) DEFAULT NULL,
-  `client_id` int(11) DEFAULT NULL,
+  `client_id` varchar(128) DEFAULT NULL,
   `ref_paiement` varchar(128) DEFAULT NULL,
   `date_paiement` datetime DEFAULT NULL,
   `mode_paiement` int(11) DEFAULT NULL,

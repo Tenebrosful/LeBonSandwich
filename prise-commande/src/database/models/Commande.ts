@@ -43,10 +43,11 @@ export class Commande extends Model {
 
   @Default(null)
   @ForeignKey(() => User)
-  @Column(DataType.INTEGER)
-  user_id: number;
+  @Default(DataType.UUIDV4)
+  @Column(DataType.UUID)
+  client_id: string;
 
-  @BelongsTo(() => User, "user_id")
+  @BelongsTo(() => User, "client_id")
   user: User;
 
   @Default(null)

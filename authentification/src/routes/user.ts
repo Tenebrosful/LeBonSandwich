@@ -18,41 +18,41 @@ users.post("/", async (req, res, next) => {
 
   if (!handleDataValidation(UserSchema, userFields, req, res, true)) return;
 
-  if (req.body.status) 
+  if (req.body.status) {
     (userFields as any).status = req.body.status;
-  
 
-  userFields.passwd = passwordHash(userFields.passwd);
 
-  try {
-    const user = await User.create({ ...userFields });
-    const token = jwt.sign(
-      {
-        mail: user.mail,
-        nom: user.nom,
-        status: user.status,
-        token: user.id,
-      },
-      "RANDOM_TOKEN_SECRET", { expiresIn: "1h" });
-    user.token = token;
-    if (user) {
+    userFields.passwd = passwordHash(userFields.passwd);
 
-      const resData = {
-        type: "resource",
-        user: {
-          created_at: user.created_at,
-          mail: user.mail,
-          nom: user.nom,
-          token: token,
+    try {
+      const user = await User.create({ ...userFields });
+      const token = jwt.sign(
+        { 
+          id: user.id, 
+          mail: user.mail, 
+          nom: user.nom, 
+          status: user.status, 
         },
-      };
+        process.env.SECRETPASSWDTOKEN || '', { expiresIn: '1h' });
+      user.token = token;
+      if (user) {
 
-      res.status(201).json(resData);
+        const resData = {
+          type: "resource",
+          user: {
+            created_at: user.created_at,
+            mail: user.mail,
+            nom: user.nom,
+            token: token,
+          },
+        };
+
+        res.status(201).json(resData);
+      }
+    } catch (error) {
+      next(error);
     }
-  } catch (error) {
-    next(error);
   }
-
 });
 
 users.post("/auth", async (req, res, next) => {
@@ -73,6 +73,7 @@ users.post("/auth", async (req, res, next) => {
       });
 
     if (!user) {
+
       res.status(404).json({
         code: 404,
         message: `No user found with mail ${userFields.mail}`
@@ -82,22 +83,66 @@ users.post("/auth", async (req, res, next) => {
 
     if (passwordVerify(userFields.passwd, user.passwd)) {
       const token = jwt.sign(
-        {
-          mail: user.mail,
-          nom: user.nom,
-          status: user.status,
-          token: user.id,
+        { id: user.id, 
+          mail: user.mail, 
+          nom: user.nom, 
+          status: user.status, 
         },
-        "RANDOM_TOKEN_SECRET", { expiresIn: "1h" });
+        process.env.SECRETPASSWDTOKEN || '', { expiresIn: '1h' });
       res.status(200).json({ token });
     } else {
       res.status(403).json({
         code: 403,
-        message: "Password is not valid"
+        message: `Password is not valid`
       });
 
       return;
     }
+
+  } catch (error) {
+    next(error);
+  }
+
+});
+
+users.post("/tokenVerify", async (req, res, next) => {
+
+  let tokenData
+
+  jwt.verify(req.headers['authorization'] as string, process.env.SECRETPASSWDTOKEN || '', (err: any, decode: any) => {
+    if (err) {
+      res.status(403).json({
+        code: 403,
+        message: err.message
+      });
+
+    } else {
+      tokenData = decode;
+    }
+  })
+
+  if (!tokenData) return;
+
+  try {
+    const user = await User.findOne(
+      {
+        attributes: ["id", "mail", "nom", "created_at", "cumul_achats", "status", "passwd"],
+        // @ts-ignore
+        where: { id: tokenData.id }
+
+      });
+
+    if (!user) {
+
+      res.status(404).json({
+        code: 404,
+        // @ts-ignore
+        message: `No user found with mail ${tokenData.mail}`
+      });
+      return;
+    }
+
+    res.status(200).json(user);
 
   } catch (error) {
     next(error);

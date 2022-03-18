@@ -9,6 +9,6 @@ export default function error500(err: Error, req: Request, res: Response, next: 
   console.error(err);
   res.status(500).json({
     code: 500,
-    message: ("[Auth API]" + process.env.NODE_ENV === "dev" ? err.message : "Erreur Serveur")
+    message: ("[Gateway] " + process.env.NODE_ENV === "dev" ? err.message : "Erreur Serveur")
   });
 }

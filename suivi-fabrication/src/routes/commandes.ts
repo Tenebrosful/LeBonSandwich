@@ -1,11 +1,12 @@
 import * as express from "express";
 import { Commande } from "../database/models/Commande";
+import { ResponseAllCommandes, ResponseCommande, ResponseType } from "../types/ResponseTypes";
 import error405 from "../errors/error405";
-import { ResponseAllCommandes } from "../types/ResponseTypes";
 import { Op, WhereOptions } from "sequelize";
 const commandes = express.Router();
 
 commandes.get("/", async (req, res, next) => {
+  
   const filter: WhereOptions<any> = {};
   const limit = Math.max(parseInt(req.query.size as string) || 10, 0);
   const offset = Math.max(((parseInt(req.query.page as string) - 1) || 0) * limit, 0);
@@ -44,6 +45,58 @@ commandes.get("/", async (req, res, next) => {
       size: limit,
       type: "collection",
     };
+
+    res.status(200).json(resData);
+  } catch (error) {
+    next(error);
+  }
+});
+
+commandes.get("/:id", async (req, res, next) => {
+  try {
+    const commande = await Commande.findOne(
+      {
+        attributes: ["id", "mail", "nom", "created_at", "livraison", "montant"],
+        where: { id: req.params.id }
+      });
+
+    if (!commande) {
+      res.status(404).json({
+        code: 404,
+        message: `No commande found with id ${req.params.id}`
+      });
+      return;
+    }
+
+    const resData: { commande: ResponseCommande } & ResponseType = {
+      commande: {
+        date_commande: commande.created_at,
+        date_livraison: commande.livraison,
+        id: commande.id,
+        links: {
+          items: { href: "/commande/" + commande.id + "/items/" },
+          self: { href: "/commande/" + commande.id }
+        },
+        mail_client: commande.mail,
+        montant: commande.montant,
+        nom_client: commande.nom,
+      },
+
+      type: "resource",
+    };
+
+    if (req.query.embed) {
+      const embeds = (req.query.embed as string).split(",");
+
+      if (embeds.includes("items")) resData.commande.items = (await commande.$get("items")).map(item => {
+        return {
+          id: item.id,
+          libelle: item.libelle,
+          quantite: item.quantite,
+          tarif: item.tarif
+        };
+      });
+    }
 
     res.status(200).json(resData);
   } catch (error) {
