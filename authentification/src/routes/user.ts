@@ -6,7 +6,6 @@ import handleDataValidation from "../middleware/handleDataValidation";
 import * as jwt from "jsonwebtoken";
 import error405 from "../errors/error405";
 import { generate as passwordHash, verify as passwordVerify } from "password-hash";
-import { ObjectEncodingOptions } from "fs";
 const users = express.Router();
 
 users.post("/", async (req, res, next) => {
@@ -28,7 +27,12 @@ users.post("/", async (req, res, next) => {
     try {
       const user = await User.create({ ...userFields });
       const token = jwt.sign(
-        { id: user.id, status: user.status, nom: user.nom, mail: user.mail },
+        { 
+          id: user.id, 
+          mail: user.mail, 
+          nom: user.nom, 
+          status: user.status, 
+        },
         process.env.SECRETPASSWDTOKEN || '', { expiresIn: '1h' });
       user.token = token;
       if (user) {
