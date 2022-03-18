@@ -12,16 +12,16 @@ const users = express.Router();
 users.post("/", async (req, res, next) => {
 
   const userFields = {
-    passwd: req.body.passwd,
     mail: req.body.mail,
     nom: req.body.nom,
+    passwd: req.body.passwd,
   };
 
   if (!handleDataValidation(UserSchema, userFields, req, res, true)) return;
 
   if (req.body.status) {
     (userFields as any).status = req.body.status;
-  }
+  
 
   userFields.passwd = passwordHash(userFields.passwd);
 
@@ -34,13 +34,13 @@ users.post("/", async (req, res, next) => {
     if (user) {
 
       const resData = {
+        type: "resource",
         user: {
           created_at: user.created_at,
           mail: user.mail,
           nom: user.nom,
           token: token,
         },
-        type: "resource",
       };
 
       res.status(201).json(resData);
@@ -54,8 +54,8 @@ users.post("/", async (req, res, next) => {
 users.post("/auth", async (req, res, next) => {
 
   const userFields = {
-    passwd: req.body.passwd,
     mail: req.body.mail,
+    passwd: req.body.passwd,
   };
 
   if (!handleDataValidation(ConnectionSchema, userFields, req, res, true)) return;
