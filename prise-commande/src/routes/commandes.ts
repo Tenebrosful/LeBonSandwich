@@ -203,27 +203,27 @@ commandes.post("/", async (req, res, next) => {
 
   let tokenData;
 
-  jwt.verify((res.locals.token = req.headers['authorization']) as string, process.env.SECRETPASSWDTOKEN || '', (err: any, decode: any) => {
-    if (err) {
+  jwt.verify((res.locals.token = req.headers["authorization"]) as string, process.env.SECRETPASSWDTOKEN || "", (err: any, decode: any) => {
+    if (err) 
       res.status(403).json({
         code: 403,
         message: err.message
       });
       
-    } else {
+     else 
       tokenData = decode;
-    }
-  })
+    
+  });
   
   if(!tokenData) return;
 
   const commandFields = {
-    //@ts-ignore
+    // @ts-ignore
     client_id: tokenData.id,
     livraison: req.body.livraison,
-    //@ts-ignore
+    // @ts-ignore
     mail: tokenData.mail,
-    //@ts-ignore
+    // @ts-ignore
     nom: tokenData.nom,
   };
 
@@ -233,7 +233,7 @@ commandes.post("/", async (req, res, next) => {
     const commande = await Commande.create({ ...commandFields });
     const token = jwt.sign(
       { token: commande.id },
-      process.env.SECRETPASSWDTOKEN || '');
+      process.env.SECRETPASSWDTOKEN || "");
     commande.token = token;
     if (commande) {
       

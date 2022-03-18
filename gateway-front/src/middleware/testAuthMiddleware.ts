@@ -3,12 +3,12 @@ import axios from "axios";
 import { NextFunction, Request, Response } from "express";
 
 export default async function testAuthMiddleware(req: Request, res: Response, next: NextFunction){
-    if(!req.query.token && !req.headers["x-lbs-token"]){
+    if(!req.query.token && !req.headers["x-lbs-token"])
         res.status(403).json({
             code: 403,
-            message: `You are not connected`
+            message: "You are not connected"
           });
-    } else {
+     else {
         res.locals.token = req.query.token || req.headers["x-lbs-token"];
         try {
           axios.post(`${process.env.AUTHENTIFICATION}/tokenVerify`, {}, { headers:{authorization: ""+ res.locals.token}})

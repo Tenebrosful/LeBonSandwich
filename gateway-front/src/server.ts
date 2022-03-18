@@ -4,7 +4,7 @@ import logger from "./middleware/logger";
 import * as bodyParser from "body-parser";
 
 import commandes from "./routes/commandes";
-import auth from './routes/auth';
+import auth from "./routes/auth";
 
 import error400 from "./errors/error400";
 import error500 from "./errors/error500";

@@ -2,24 +2,24 @@ import axios from "axios";
 import * as jwt from "jsonwebtoken";
 import * as express from "express";
 import error405 from "../errors/error405";
-import testAuthMiddleware from "../middleware/testAuthMiddleware"
+import testAuthMiddleware from "../middleware/testAuthMiddleware";
 const commandes = express.Router();
 
 commandes.get("/", testAuthMiddleware, async (req, res, next) => {
 
-  let tokenData
+  let tokenData;
 
-  jwt.verify((res.locals.token = req.query.token || req.headers["x-lbs-token"]) as string, process.env.SECRETPASSWDTOKEN || '', (err: any, decode: any) => {
-    if (err) {
+  jwt.verify((res.locals.token = req.query.token || req.headers["x-lbs-token"]) as string, process.env.SECRETPASSWDTOKEN || "", (err: any, decode: any) => {
+    if (err) 
       res.status(403).json({
         code: 403,
         message: err.message
       });
       
-    } else {
+     else 
       tokenData = decode;
-    }
-  })
+    
+  });
 
   if(!tokenData) return;
   try {
